@@ -1,0 +1,1199 @@
+summary day1
+# 기본 활용 -------------------------------------------------------------------
+
+ctrl + L
+ctrl + enter
+
+ctrl + shift + r
+ctrl + shift + o
+
+ctrl + shift + N
+ctrl + s
+
+alt + -          # <- 
+ctrl + shift + m    #  %>% 
+
+ls()
+rm()
+rm(list = ls())
+
+?            # F1
+??
+# 윗쪽 화살표 
+
+ 
+# 프로젝트 만들기 ------------------------------------------
+
+# file --> new project .....
+getwd()
+
+
+# vector ------------------------------------------------
+
+x <- c(3,4,5,6,7)
+x
+
+x[3]
+x[3, 5]            # error
+x[c(3,5)]
+
+x[2:5]
+
+x[-3]
+x[-c(3,5)]
+
+x[3] <- 100
+x
+x <- x*10
+x
+
+
+# Vector function ---------------------------------------------------------
+
+length(x)
+
+seq(1,5)
+seq(1,10, by=2)
+seq(1,2, by = 0.05)
+
+seq(1, length=10, by = 3)
+
+rep(x, 3)
+rep(x, each = 3)
+
+paste("X", 1:10)
+paste("X", 1:10, sep = "_")
+
+paste0("X", 1:10)
+
+
+# matrix ------------------------------------------------------------------
+
+mat <- matrix(1:30, nrow = 6)
+mat
+
+mat <- matrix(1:30, nrow = 6, byrow=T)
+mat
+
+mat[2, 4]
+mat[2, ]
+mat[, 4]
+
+mat[, 4, drop = F]
+
+mat[c(2,4), c(1, 3)]
+
+
+ind <- matrix(c(1,3,2,2,3,1), nrow=3, byrow =T)
+ind
+mat[ind]
+
+
+# matrix fuction ----------------------------------------------------------
+
+dim(mat)
+nrow(mat)
+ncol(mat)
+
+dim(mat)[1]   # nrow()
+dim(mat)[2]
+
+
+# list --------------------------------------------------------------------
+
+lst <- list(
+  name = "Ke",
+  age = 39,
+  height = 180,
+  certi = c("A","B")
+)
+lst
+
+lst$height
+lst$certi
+
+lst[1]   # []   리스트의 부분집합
+class(lst[1])
+
+lst[[4]]
+class(lst[[4]])    # [[]]   값을 추출  
+
+lst[[4]][2]
+
+# 새로운 변수 추가
+lst$new <- 1:10
+lst
+
+# 변수 삭제 
+lst$new <- NULL
+lst
+
+
+
+# data.frame --------------------------------------------------------------
+
+head(iris)
+
+# data.frame은 리스트의 특수한 형태다. (리스트 문법 적용가능)
+
+df <- data.frame(
+  A = 1:6, 
+  B = 6:1,
+  C = runif(6),
+  D = LETTERS[1:6]
+)
+df
+
+df$C
+df$D
+
+df[4]
+df[[4]]
+
+df[[4]][3]
+df[4][3]    # error         
+
+
+# runif  : 0~1 사이의 uniform 난수를 생성 (N개)
+runif(5)
+runif(5) * 100
+runif(5, 3, 4)
+?runif
+runif(5, 30, 40)
+
+
+# matrix 문법도 고대로 사용 가능 
+df
+df[, 4]
+df[,3:4]
+df[3, 4]
+
+df[2, ]
+
+
+# etc ---------------------------------------------------------------------
+
+summary(iris)
+summary(df)
+
+str(iris)
+str(df)
+
+head(iris)
+View(iris)
+
+cut()
+
+v = runif(1000, 0, 100)
+v
+
+vc = cut(v, breaks = seq(0,100, by=20), labels = c("가","양","미","우","수"))
+table(vc)
+
+summary day2
+
+
+# for ---------------------------------------------------------------------
+
+for (i in 1:10) {
+  
+  print(i)
+}
+
+for (i in 1:10 ) {
+  
+  if( i %% 2 == 1) {
+    cat(i, "는 홀수입니다 \n")
+  } else {
+    cat(i, "는 **짝수입니다 \n")
+  }
+  
+}
+
+for (i in 1:10 ) {
+  
+  if( i %% 2 == 1)  cat(i, "는 홀수입니다 \n")
+}
+
+
+for (i in 1:10 ) {
+  
+  if( i %% 3 == 0) {
+    cat(i, " 나머지가 0입니다.  \n")
+  } else if ( i %% 3 == 1) {
+    cat(i, " 나머지가 1입니다.  \n")
+  } else {
+    cat(i, " 나머지가 2입니다.  \n")
+  }
+  
+}
+
+# 구구단 
+out <- NULL
+k=1
+for (i in 2:9) {
+  
+  cat(i, "단입니다 ----------------------------------\n\n")
+
+  for (j in 1:9) {
+    
+    cat(i, "x", j, "=", i * j, "\n")
+    out[k] <- paste(i, "x", j, "=", i * j)
+    k=k+1
+  }  
+  cat("\n")
+}
+
+out
+
+
+for (i in 2:9) {
+  
+  cat(i, "단입니다 ----------------------------------\n\n")
+  
+  for (j in 1:9) {
+    
+    cat(i, "x", j, "=", i * j, "\n")
+  }  
+  cat("\n")
+}
+
+# function ----------------------------------------------------------------
+
+myFun <- function(c, d) {
+  
+  output <- c * d + d 
+  
+  return(output)
+}
+ls()
+
+myFun(1,2)
+
+myFun2 <- function(c=0, d=0) {
+  
+  output <- c * d + d 
+  
+  return(output)
+}
+myFun2()
+myFun2(d=1)
+myFun2(1,2)
+
+
+my4Calc <- function(a, b) {
+  
+  out <- list(
+    plus = a + b,
+    minus = a-b,
+    prod = a*b,
+    div = a/b
+  )
+  
+  return(out)
+}
+out <- my4Calc(100,2000)
+out$minus
+
+
+# ggplot ------------------------------------------------------------------
+
+library(ggplot2)
+ggplot(data, aes()) + geom_point()
+
+# [1] "Sepal.Length" "Sepal.Width"  "Petal.Length" "Petal.Width"  "Species"   
+ggplot(iris, aes(Petal.Length, Petal.Width, color=Species)) + 
+  geom_point(size=5, alpha=0.5)
+
+ggplot(iris, aes(Petal.Length, Petal.Width, color=Species)) + 
+  geom_point(size=5, alpha=0.5) +
+  facet_wrap(~Species)
+
+library(plotly)
+g <- ggplot(iris, aes(Petal.Length, Petal.Width, color=Species)) + 
+  geom_point(size=5, alpha=0.5)
+ggplotly(g)
+
+
+# aes_string
+ggplot(iris, aes_string("Petal.Length", "Petal.Width", color="Species")) + 
+  geom_point(size=5, alpha=0.5)
+
+for (var in names(iris)) {
+  
+  g <- ggplot(iris, aes_string(var, "Petal.Width", color="Species")) + 
+    geom_point(size=5, alpha=0.5)
+  
+  print(g)
+}
+
+
+
+# rmarkdown ---------------------------------------------------------------
+
+
+# summary day3
+
+
+
+# tidyr -------------------------------------------------------------------
+
+library(tidyr)
+
+# gather, spread
+
+wide = read.csv("Data/wide_data.csv")
+wide
+
+long <- gather(wide, month, sales, 2:13)
+# gather(wide, month, sales, -1)
+# gather(wide, month, sales, -업종)
+long
+
+spread(long, month, sales)
+
+
+iris_long <- gather(iris, var, value, -5)
+iris_long
+
+write.csv(iris_long, "Data/iris_long3.csv")
+
+
+
+# dplyr -------------------------------------------------------------------
+
+library(dplyr)
+
+# select, filter, mutate, group_by, summarise, arrage
+
+# iris에서 1,4,5 컬럼을 선택하시고, 
+# Setosa 아닌 데이타만 골라서
+# Sepal.Length의 값이 5보다 크면 "Big", 작으면 "Small"을 뜻하는 size라는 변수를 만드시고, 
+# Species, size 별로
+# Sepal.Length와 Petal.Width의 평균과 S.D을 요약하여,
+# 결과를 Sepal.Length의 평균의 내림차순으로 정렬하시오 
+
+iris %>% select(1,4,5) %>% 
+  filter(Species != "setosa") %>% 
+  mutate(size = ifelse(Sepal.Length>5, "Big", "Small")) %>% 
+  group_by(Species, size) %>% 
+  summarise(mSL = mean(Sepal.Length),
+            sSL = sd(Sepal.Length),
+            mPW = mean(Petal.Width),
+            sPW = sd(Petal.Width),
+            N = n()) %>% 
+  arrange(-mSL)
+
+
+# iris의 모든 꽃잎의 크기의 평균을 품종에 따라 요약하시오. 
+iris %>% group_by(Species) %>% 
+  summarise(mSL = mean(Sepal.Length),
+            mSW = mean(Sepal.Width),
+            mPL = mean(Petal.Length),
+            mPW = mean(Petal.Width))
+
+
+iris %>% gather(var, value, -5) %>% 
+  group_by(Species, var) %>% 
+  summarise(mVar = mean(value)) %>% 
+  spread(var, mVar)
+
+
+
+# Random Forest -----------------------------------------------------------
+library(randomForest)
+
+md <- randomForest(Species ~ . , data = iris, ntree=200)
+md
+
+new = data.frame(
+  Sepal.Length =1,
+  Sepal.Width = 1,
+  Petal.Length =1,
+  Petal.Width =1
+)
+predict(md, new, type="prob")
+
+md$importance
+
+
+# summary ad_ dplyr
+
+
+iris %>% head()
+iris %>% head
+
+a <- c('X1', 'X2')
+b <- c('X2', 'X3')
+
+setdiff(a, b)
+
+a %>% setdiff(b)
+b %>% setdiff(a, .)
+
+iris %>% .[2, ]
+
+
+# iris 데이터에서 Sepal.Length와 Species 열만 선택한다
+# Species에 대해 group_by 지정한다
+# 그룹별 Sepal.Length의 평균과 표준편차를 계산하여 정규화시킨다
+# 계산과정을 위해 생성한 열을 제거한다
+
+a <- 
+iris %>% select(1,5) %>% 
+  group_by(Species) %>% 
+  mutate(mean = mean(Sepal.Length),
+            sd = sd(Sepal.Length))  %>% 
+  mutate(Sepal.Length = (Sepal.Length-mean)/sd) %>% 
+  select(-mean, -sd)
+
+a %>% group_by(Species) %>% 
+  summarise(mean = mean(Sepal.Length),
+         sd = sd(Sepal.Length))
+
+
+# Basic Functions ---------------------------------------------------------
+library(dplyr)
+
+slice(iris, c(1,5))
+slice(iris, 10:15)
+
+iris %>% select(starts_with("Se")) %>% 
+  head
+iris %>% select(ends_with("Length")) %>% 
+  head
+iris %>% select(contains("Len")) %>% 
+  head    
+
+iris %>% rename(Spec = Species) %>% 
+  head
+
+iris %>% select(4:5) %>% 
+  distinct
+iris %>% select(5) %>% 
+  distinct
+
+set.seed(100)
+iris %>% sample_n(2)
+iris %>% sample_frac(0.1)
+
+rownames(iris)
+
+library(tibble)
+iris %>% rownames_to_column()
+
+
+# select ------------------------------------------------------------------
+
+iris %>% select_if(is.numeric) %>% 
+  head
+
+myfun <- function(x) (mean(x) > 3)& is.numeric(x)
+
+iris %>% select_if(myfun) %>% 
+  head
+
+iris %>% select_if(function(x) (mean(x) > 4)& is.numeric(x)) %>% 
+  head
+
+head(diamonds)
+diamonds %>% select_if(is.numeric)
+
+diamonds[, sapply(diamonds, is.numeric)]
+
+
+
+# filter ------------------------------------------------------------------
+
+iris %>%  
+  select_if(is.numeric) %>% 
+  filter_all(all_vars( . < 4.5))
+
+iris %>%  
+  select_if(is.numeric) %>% 
+  filter_all(any_vars( . > 7))
+
+
+iris %>% 
+  filter_if(is.numeric, all_vars( . < 4.5))
+iris %>% 
+  filter_if(is.numeric, any_vars( . > 7))
+
+iris %>% 
+  filter_at(vars(1:2), all_vars( . > 4))
+
+iris %>% 
+  filter_at(vars(starts_with("Se")), all_vars( . > 4))
+
+
+
+# mutate ------------------------------------------------------------------
+
+iris %>% mutate_all(toupper)
+
+iris %>% mutate_if(is.numeric, function(x) x*10)
+
+iris %>% mutate_at(vars(contains("Length")), ~(.*100))
+iris %>% mutate_at(vars(contains("Length")),function(x) x*100)
+
+iris %>% mutate(SL=Sepal.Length*10)
+iris %>% transmute(SL=Sepal.Length*10)
+
+
+# iris 데이터에서 모든 연속형변수에 대해 품종별로 정규화하시오. 
+a <-
+iris %>% group_by(Species) %>%  
+  mutate_if(is.numeric, function(x) (x - mean(x)) / sd(x))
+
+a %>% group_by(Species) %>% 
+  summarise_if(is.numeric, mean)
+a %>% group_by(Species) %>% 
+  summarise_if(is.numeric, sd)
+
+
+
+# summarise ---------------------------------------------------------------
+
+iris %>% summarise_all(mean, na.rm=TRUE)
+
+iris %>% summarise_if(is.numeric, mean)
+
+iris %>% group_by(Species) %>% summarise(n())
+
+iris %>% group_by(Species) %>% distinct(Petal.Width)
+
+iris %>% group_by(Species) %>% summarise(n_distinct(Petal.Width))
+
+iris %>% group_by(Species) %>% add_count() 
+
+iris %>% group_by(Species) %>% slice(1)
+
+
+iris %>% select(-Sepal.Length)
+
+
+#summary ad fuctions
+
+apply(iris[,1:4], 2, mean)
+apply(iris[,1:4], 1, mean)
+
+data(iris)
+irisNA <- iris
+irisNA[1,1] <- NA
+head(irisNA)
+
+apply(irisNA[,1:4], 2, mean)
+
+mean(irisNA[,1], na.rm = T)
+
+apply(irisNA[,1:4], 2, mean, na.rm=T)
+
+lapply(iris, class)
+lapply(iris[,1:4], max)
+lapply(irisNA[,1:4], max, na.rm=T)
+
+sapply(iris, class)
+sapply(iris[,1:4], max)
+
+sapply(iris, is.numeric)
+
+tapply(iris$Sepal.Length, iris$Species, mean)
+
+colMeans(iris[, 1:4])
+
+a <- sweep(iris[, 1:4], 2, colMeans(iris[, 1:4]), "-")
+colMeans(a)
+
+
+# user defined function
+sapply(1:5, function(x) x^2)
+
+mean2 <- function(x) {
+  out <- mean(x) + 10
+  return(out)
+}
+sapply(iris[,1:4], mean2)
+
+sapply(1:5, function(x) {
+  print(x^2)
+  x^2
+})
+
+
+# file handling -----------------------------------------------------------
+list.files(".", "^A")
+list.files(".", "l$")
+
+file.info("Lecture_2_-_Advanced_dplyr.html")
+
+
+file.path("Data", "demo.sqlite")
+paste("Data", "demo.sqlite", sep="/")
+
+dir.create("TempDir4/aaa/bbb", recursive = T)
+
+
+# String ------------------------------------------------------------------
+
+substr("abcdef", 2, 4)
+substr("abcdef", 5, 6)
+
+grep("A", c("b", "A", "c", "Apple"), 
+     value=T)
+grep("A", c("b", "A", "c", "Apple"), 
+     value=T, invert=T)
+
+grep("Length", names(iris), 
+     value=T)
+
+grep("^S", names(iris), 
+     value=T)
+
+grep("h$", names(iris), 
+     value=T)
+    
+
+sub(" ", "--", "Hello There")
+
+sub("Temp", "TTTemp", list.files("."))
+
+gsub("/", "\\", list.dirs("."), fixed=T)
+
+gsub("setosa", "Seto", iris$Species, fixed=T)
+
+
+strsplit("a-b-c", "-")
+tolower("APPLE")
+
+library(stringr)
+str_to_title("advanced function")
+
+str_pad("aa", width=4, pad="-")
+str_pad(1, width=4, pad="0")
+str_pad(100, width=4, pad="0")
+
+
+# random  -----------------------------------------------------------------
+set.seed(200)
+runif(5,min=0, max=100)
+rnorm(5,mean=50, sd=10)
+
+sample(1:100, 3, replace = F)
+
+sample(1:2, 3, replace = T)
+
+# 로또
+sample(1:45, 6, replace=F)
+
+
+sapply(1:100, function(x) sample(1:45, 6, replace=F))
+
+
+
+# Set ---------------------------------------------------------------------
+
+"D" %in% c("A","B","C","D")
+
+union(c("A","B"), c("B","C"))
+
+intersect(c("A","B"), c("B","C"))
+
+setdiff(c("A","B"), c("B","C"))
+
+setequal(c("A","B"), c("B","C"))
+
+
+# ETC ---------------------------------------------------------------------
+
+# 0~100   점수를  1000 개 생성하여, 100~80은 수, 80~60 우,
+# 수우미양가를 부여하고, 각각을 카운트 하시오. 
+
+x <- sample(0:100, 1000000, replace = T)
+x
+
+score <- cut(x, breaks = seq(0, 100, by=20), 
+             labels = c('가', '양', '미', '우', '수'),
+             include.lowest = T)
+score
+table(score)
+prop.table(table(score))
+
+
+
+sapply(1:5, function(x) rnorm(5))
+
+library(purrr)
+rerun(5, rnorm(5))
+
+
+reduce(1:10, `+`)
+reduce(1:10, `*`)
+reduce(c("a","b","c"), paste, sep="-")
+
+
+library(gtools)
+library(readxl)
+
+read_excel("Data/excel_file.xlsx")
+
+files <- lapply(1:3, function(i) {
+  as.data.frame(read_excel("Data/excel_file.xlsx", sheet = i))
+})
+
+reduce(files, smartbind)
+
+
+# etc ---------------------------------------------------------------------
+
+# Y ~ X1 + X2 + X3
+
+xname <- c("X1","X2","X3")
+
+str <- paste("Y ~ ", paste(xname, collapse = " + "))
+formula(str)
+
+xname <- names(iris)[1:3]
+
+str <- paste("Species ~ ", paste(xname, collapse = " + "))
+str
+
+library(randomForest)
+randomForest(formula(str), data=iris, ntree=200)
+
+
+levels(iris$Species)
+
+which.max(c(1,2,3,7,3,1))  #which.min
+
+system.time({
+  
+  lapply(1:10000, function(x) x^2)
+  
+})
+
+Sys.time()
+
+a = 3
+ifelse(a > 5, "a","b")
+
+cumsum(1:5)
+
+
+# shiny_example --------------------------
+library(shiny)
+ui <- pageWithSidebar(
+  headerPanel('Shiny Example'),
+  
+  sidebarPanel(width=3,
+               selectizeInput("x", "Select X", choices=names(iris)),
+               selectizeInput("y", "Select y", choices=names(iris))
+  ),
+  
+  mainPanel(
+    plotOutput('plot1', height="600px")
+  )  
+)
+
+server <- function(input, output, session) {
+  
+  output$plot1 <- renderPlot({
+    library(ggplot2)
+    ggplot(iris, aes_string(input$x, input$y, color = "Species")) +
+      geom_point(size=5, alpha=0.3)
+  })
+}
+
+shinyApp(ui, server)
+
+# caret modeling-------------------------
+
+library(caret)
+
+data <- iris
+
+# data partition --------------------------------------
+
+set.seed(100)
+ind <- createDataPartition(data$Species, p=0.7, list=F)
+head(ind)
+
+train <- data[ind, ]
+valid <- data[-ind, ]
+dim(train)
+dim(valid)
+
+# EDA -------------------------------------------------
+
+# Modeling  -------------------------------------------------
+control = trainControl(method="cv", 
+                       number = 10)
+metric = "Accuracy"
+
+rf_md <- train(Species ~ .,
+               data = train,
+               method = "rf",
+               trControl = control,
+               metric = metric)
+rf_md
+
+knn_md <- train(Species ~ .,
+               data = train,
+               method = "knn",
+               trControl = control,
+               metric = metric)
+knn_md
+
+lda_md <- train(Species ~ .,
+                data = train,
+                method = "lda",
+                trControl = control,
+                metric = metric)
+lda_md
+
+# 모형 비교 ---------------------------------------
+result <- resamples(list(
+  rf = rf_md,
+  knn = knn_md,
+  lda = lda_md
+))
+summary(result)
+dotplot(result)
+
+# 예측 평가  ---------------------------------------
+pred = predict(knn_md, valid)
+pred
+confusionMatrix(pred, valid$Species)
+
+# 상세 파라미터 튜닝   ---------------------------------------
+grid = expand.grid(k=seq(1,50, by=2))
+
+knn_md2 <- train(Species ~ .,
+                data = train,
+                method = "knn",
+                trControl = control,
+                metric = metric,
+                tuneGrid = grid)
+knn_md2
+plot(knn_md2)
+
+# Auto Encoder
+
+
+library(h2o)
+h2o.init(nthreads = -1)
+
+#  Load the MNIST and prepare the data ------------------------------------
+
+train_file <- "https://h2o-public-test-data.s3.amazonaws.com/bigdata/laptop/mnist/train.csv.gz"
+test_file <- "https://h2o-public-test-data.s3.amazonaws.com/bigdata/laptop/mnist/test.csv.gz"
+train <- h2o.importFile(train_file)
+test <- h2o.importFile(test_file)
+dim(train)
+dim(test)
+
+y <- "C785"  #response column: digits 0-9
+x <- setdiff(names(train), y)  #vector of predictor column names
+train[,y] <- as.factor(train[,y])
+test[,y] <- as.factor(test[,y])
+
+splits <- h2o.splitFrame(train, 0.5, seed = 1)
+
+# first part of the data, without labels for unsupervised learning
+train_unsupervised <- splits[[1]]
+# second part of the data, with labels for supervised learning
+train_supervised <- splits[[2]]
+
+dim(train_supervised)
+dim(train_unsupervised)
+
+
+# Create Auto Encoding Model ---------------------------------
+
+hidden <- c(128, 64, 128)
+ae_model <- h2o.deeplearning(x = x, 
+                             training_frame = train_unsupervised,
+                             model_id = "mnist_autoencoder",
+                             ignore_const_cols = FALSE,
+                             activation = "Tanh",  # Tanh is good for autoencoding
+                             hidden = hidden,
+                             autoencoder = TRUE)
+ae_model
+
+# Classification Model using Deep Feature ---------------------------------
+
+fit1 <- h2o.deeplearning(x = x, y = y,
+                         training_frame = train_supervised,
+                         ignore_const_cols = FALSE,
+                         hidden = hidden,
+                         pretrained_autoencoder = "mnist_autoencoder")
+
+perf1 <- h2o.performance(fit1, newdata = test)
+h2o.mse(perf1)
+
+
+# Classification Model using Original Variable ---------------------------------
+
+fit2 <- h2o.deeplearning(x = x, y = y,
+                         training_frame = train_supervised,
+                         ignore_const_cols = FALSE,
+                         hidden = hidden)
+
+perf2 <- h2o.performance(fit2, newdata = test)
+h2o.mse(perf2)
+
+
+h2o.automl( x = names(iris)[1:4],
+            y = "Species",
+            training_frame = as.h2o(iris), max_runtime_secs = 60 )
+h2o.automl
+
+
+# Anomaly Detection -------------------------------------------------------
+
+test_rec_error <- as.data.frame(h2o.anomaly(ae_model, test)) 
+test_rec_error
+test_recon <- predict(ae_model, test)
+dim(test_recon)
+
+# helper functions for display of handwritten digits adapted from http://www.r-bloggers.com/the-essence-of-a-handwritten-digit/
+plotDigit <- function(mydata, rec_error) {
+  len <- nrow(mydata)
+  N <- ceiling(sqrt(len))
+  par(mfrow = c(N,N), pty = 's', mar = c(1,1,1,1), xaxt = 'n', yaxt = 'n')
+  for (i in 1:nrow(mydata)) {
+    colors <- c('white','black')
+    cus_col <- colorRampPalette(colors = colors)
+    z <- array(mydata[i,], dim = c(28,28))
+    z <- z[,28:1]
+    class(z) <- "numeric"
+    image(1:28, 1:28, z, main = paste0("rec_error: ", round(rec_error[i],4)), col = cus_col(256))
+  }
+}
+plotDigits <- function(data, rec_error, rows) {
+  row_idx <- sort(order(rec_error[,1],decreasing=F)[rows])
+  my_rec_error <- rec_error[row_idx,]
+  my_data <- as.matrix(as.data.frame(data[row_idx,]))
+  plotDigit(my_data, my_rec_error)
+}
+
+plotDigits(test_recon, test_rec_error, c(1:6)); plotDigits(test, test_rec_error, c(1:6))
+
+# Now we plot the 6 digits with the highest reconstruction error – these are the biggest outliers.
+plotDigits(test_recon, test_rec_error, c(9995:10000))
+plotDigits(test, test_rec_error, c(9995:10000))
+
+
+# flickr_logos ----------------
+# http://image.ntua.gr/iva/datasets/flickr_logos/
+
+
+# For each image of the annotated set, the tab separated text file below contains one line
+# with the following fields:
+#   
+#   Image filename
+#   Class name
+#   Training subset of class (1,...,6)
+#   Coordinates of the top left and bottom right corners (x1 y1 x2 y2)
+
+library(dplyr)
+library(ggplot2)
+library(keras)
+library(caret)
+library(data.table)
+
+# Read Label --------------------------------------------------------------
+
+label <- fread("data/flickr_logos_27_dataset/flickr_logos_27_dataset_training_set_annotation.txt", data.table=F)
+head(label)
+dim(label)
+
+names(label) <- c("file", "brand", "group", "x1","y1","x2","y2")
+head(label)
+
+label <- label[1:842, ]    # data 사이즈를 줄인다. 실습을 위해 
+unique(label$brand)
+
+# Read Images -------------------------------------------------------------
+xdata = array(dim=c(nrow(label),224,224,3))
+for(i in 1:nrow(label)) {
+  
+  # load the image
+  img_path <- paste0("data/flickr_logos_27_dataset/flickr_logos_27_dataset_images/", label[i, 1])
+  img <- image_load(img_path, target_size = c(224,224))
+  xdata[i,,,] <- imagenet_preprocess_input(image_to_array(img), mode="tf") 
+}
+dim(xdata)
+
+# plot some image
+i = 113
+img_path <- paste0("data/flickr_logos_27_dataset/flickr_logos_27_dataset_images/", label[i, 1])
+img <- image_load(img_path, target_size = c(224,224))
+img %>% image_to_array() %>% `/`(., 255) %>% as.raster %>% plot
+
+y = label[, "brand"] %>% as.factor 
+numClass = length(levels(y))
+numClass
+
+ydata <-to_categorical(as.numeric(y) - 1, num_class= numClass)
+head(ydata)
+
+# Feature Extraction with with vgg16 -------------------------------------------------
+
+fmodel <- application_vgg16(weights = 'imagenet', include_top = FALSE)
+fmodel
+
+fdata <- predict(fmodel, xdata)
+dim(fdata)
+
+# save(xdata, fdata, ydata, numClass, file = "data/flickr_logos_27_dataset/flicker.rdata")
+# load("data/flickr_logos_27_dataset/flicker.rdata")
+
+
+# Classification Model  -------------------------------------------------
+
+# Model Structure ###################################
+
+fdata <- fdata[,,,]
+y = label[, "brand"] %>% as.factor 
+numClass = length(levels(y))
+ydata <-to_categorical(as.numeric(y) - 1, num_class= numClass)
+
+
+cmodel <- keras_model_sequential() 
+cmodel %>% layer_flatten(input_shape = c(7, 7, 512)) %>%
+  layer_dense(units = 256) %>%
+  layer_dense(units = numClass, activation = 'softmax')
+cmodel
+
+# Model Compile  ###################################
+cmodel %>% compile(
+  loss = loss_categorical_crossentropy,
+  optimizer = optimizer_adadelta(lr=0.1),
+  metrics = c('accuracy')
+)
+
+summary(cmodel)
+
+# Model Fitting   ###################################
+
+set.seed(1)
+ind <- sample(1:842, 650)
+
+history <- cmodel %>% fit(
+  fdata[ind,,,], ydata[ind,], 
+  shuffle = F,
+  validation_data = list(fdata[-ind,,,], ydata[-ind,]),
+  epochs = 20,
+  verbose = T
+)
+
+plot(history)
+
+
+# Confusion Matrix    ###################################
+pred = apply(cmodel %>% predict(fdata[-ind,,,]), 1, which.max)
+pred
+
+confusionMatrix(as.factor(pred), as.factor(as.numeric(y[-ind])))
+confusionMatrix(as.factor(levels(y)[pred]), as.factor(levels(y)[as.numeric(y[-ind])]))
+
+
+# 틀린 이미지 load 
+
+l =  label[-ind, ]
+which(pred != as.numeric(y[-ind]))
+
+iii = 182
+
+img_path <- paste0("data/flickr_logos_27_dataset/flickr_logos_27_dataset_images/", l[iii, 1])
+img_path
+img <- image_load(img_path, target_size = c(224,224))
+
+img %>% image_to_array() %>% 
+  `/`(., 255) %>%
+  as.raster() %>%  plot()
+
+# First Example minist
+
+# Set Environment --------------------------------------------------------
+
+library(keras)
+# install_keras()
+
+# Preparing the Data --------------------------------------------------------
+
+mnist <- dataset_mnist()
+str(mnist)
+
+x_train <- mnist$train$x
+y_train <- mnist$train$y
+x_test <- mnist$test$x
+y_test <- mnist$test$y
+dim(x_train)
+dim(x_test)
+dim(y_train)
+dim(y_test)
+class(x_train)
+
+
+# reshape   : array_reshape()
+x_train <- array_reshape(x_train, c(nrow(x_train), 784))
+x_test <- array_reshape(x_test, c(nrow(x_test), 784))
+
+dim(x_train)
+# rescale
+x_train <- x_train / 255
+x_test <- x_test / 255
+
+# one-hot encode : to_categorical() function:
+y_train <- to_categorical(y_train, 10)
+y_test <- to_categorical(y_test, 10)
+head(y_train)
+
+# Defining the Model --------------------------------------------------------
+
+model <- keras_model_sequential() 
+model %>% 
+  layer_dense(units = 256, activation = 'relu', input_shape = c(784)) %>% 
+  layer_dropout(rate = 0.4) %>% 
+  layer_dense(units = 128, activation = 'relu') %>%
+  layer_dropout(rate = 0.3) %>%
+  layer_dense(units = 10, activation = 'softmax')
+
+summary(model)
+
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+# Training and Evaluation  --------------------------------------------------------
+
+history <- model %>% fit(
+  x_train, y_train, 
+  epochs = 30, batch_size = 128, 
+  validation_split = 0.2
+)
+
+plot(history)
+
+model %>% evaluate(x_test, y_test)
+
+pred <- model %>% predict_classes(x_test)
+real <- apply(y_test, 1, function(x) which(x==1) -1 )
+
+table(real, pred) 
+
+
+
+
+
+
+
+
+
+
+
+
+
