@@ -1,0 +1,396 @@
+
+
+# 시작하기에 앞서 ----------------------------------------------------------------
+
+# dir.create("D:/#.Secure Work Folder/DX-LSS-Project/DX-LSS강사과정")
+setwd("D:/#.Secure Work Folder/DX-LSS-Project/DX-LSS강사과정")
+getwd()
+
+
+# Define ------------------------------------------------------------------
+
+x=2
+y=2
+x+y
+
+sin(30)
+sin(30*(pi/180))
+pi/180
+
+A = c(1,2,3,4,5)        
+A[2]
+
+A1 = 1:9
+A1
+
+dim(A1) <- c(3,3)
+A1
+
+A2 = matrix(nrow=3, ncol=3, 1:9) #학습내용엔 없음
+A2
+
+
+A=seq(1,10)
+A
+sum(A)
+?seq
+
+A=rep(1,10)
+A
+B=seq(1,10)
+B
+sample(B,3)
+
+#아래는 보충 설명 내용
+
+#내장된 mtcats 데이터를 통해 확인해봄)
+is.data.frame(mtcars)
+mean(mtcars$mpg)
+
+
+
+# QUIZ1
+# mtcars의 mpg(miles per gallon)열의 합계를 구해보세요
+mean(mtcars[,1])
+a=mtcars[,1]
+a
+
+# QUIZ2
+#mtcars의 데이터에서 dart와 wt열의 데이터의 평균과 합계를 구해보세요
+
+mtcars[,5:6]
+sum(mtcars[,5])
+sum(mtcars[,6])
+sum(mtcars[,5:6])
+
+mtcars[, 'mpg']
+colnames(mtcars)
+rownames(mtcars)
+str(mtcars)
+
+head(mtcars)
+
+# measure -----------------------------------------------------------------
+
+library(dplyr)
+
+mtcars %>% head(., n=5) %>% dim(.)
+
+dim(head(mtcars, n=5))
+
+mtcars %>%  slice(., 1:5)    #결과창이 차이가 있음, 아래 있는 내용으로 반영되어 있음
+
+mtcars %>%  filter(., cyl>6, mpg>16)
+
+mtcars %>%  select(., mpg,cyl,disp,gear)
+
+mtcars %>%  select(hp,cyl,qsec) %>%  mutate(hp_per_cyl=hp/cyl)
+
+# mtcars %>%  mutate(hp_per_cyl=hp/cyl)  # select없이 단독으로 사용 가능함
+
+mtcars %>%  group_by(., cyl,gear) %>% summarise(mpg=mean(mpg))
+
+mtcars
+
+
+install.packages("tidyr")
+library(tidyr);library(dplyr)
+
+mtcars
+
+rownames(mtcars)
+
+mtcars$name=rownames(mtcars);rownames(mtcars)=NULL
+
+mtcars$name
+
+mtcars01 = mtcars %>%  select(name,mpg,cyl,disp)
+
+mtcars01
+
+mtcars01 %>%  gather(key="key", value="value", mpg, cyl, disp)
+
+mtcars02 = mtcars01 %>%  gather(key ="key", value="value",mpg,cyl,disp)
+
+mtcars02
+
+mtcars02 %>%  spread(key,value)
+
+
+mtcars1 = mtcars[,c(1:7,12)]
+mtcars2 = mtcars[,8:12]
+
+mtcars1
+mtcars2
+
+left_join(mtcars1, mtcars2, by="name")  # s가 빠짐, merge를 위해서 조정 필요. 
+
+mtcar1 = mtcars[,c(1:7,12)]
+mtcar2 = mtcars[,8:12]
+
+merge(mtcar1, mtcar2, by="name")
+
+
+mtcars1 = mtcars[,c(1:7,12)]
+mtcars2 = mtcars[,8:12]
+
+cbind(mtcars1,mtcars2)     # s가 빠짐
+
+
+Sys.Date()
+Sys.time()
+
+x=Sys.time()
+x
+x2=format(x,"%Y-%m-%d")
+
+
+as.POSIXct(x2)-as.POSIXct(x3)     # x3 정의가 없음.
+
+
+iris
+scale(iris[,1:4])
+na.omit(iris[,1:4])
+
+
+# 사례연구 설명- 제미매트
+# apply 추가 설명  
+
+
+
+# 2일차 교육 시작 ---------------------------------------------------------------
+
+#1일차 복습 
+
+2+3
+cos(0)
+sin(0)
+x=3
+y=2
+x*y
+
+x=30
+x
+x=c(3,30)
+x*y
+x=c(1,2,3,4,5,6,7,8,9,10)
+x
+x=c(1:10)
+x
+seq(1,1000)
+seq(1,1000,0.5)
+x=seq(1,100)
+x
+seq(1,100)
+1:100
+5:100
+
+x=seq(1,100,0.4)
+x[197]
+
+rep(2,100)
+rep(c(1,2),100)
+rep(c(1,2),each=100)
+rep("kim",100)
+
+sample(1:100,10)
+help(sample)
+
+# vector, matrix, data.frame
+
+x=c(1,2,3,4,5,6,7,8,9,10)
+
+matrix(x, 5, 2)
+matrix(x, 5) #하나만 적어도 상관없음
+matrix(x, nrow=5, ncol=2) #실제 명령
+
+
+data.frame() #개념 설명 후 실습
+mtcars
+mtcars[,c(1,2)]
+head(mtcars)
+mtcars$mpg
+mtcars$mpg[mtcars$mpg>20.1]
+
+
+library(tidyr);library(dplyr)
+mtcars %>% head(2) # %>%는 그리고의 의미 
+mtcars %>%  dim()
+
+mtcars %>% select(mpg,cyl)
+mtcars %>% filter(mpg>20.1)
+mtcars %>% slice(2:6)
+
+#left_join, merge, Sys.time, Sys.Date,
+#as.PoSIXct(), group_by, gather, spread()
+
+
+
+# Analyze -----------------------------------------------------------------
+
+x=c(3,4,4,6,4,7,9,10,11,11);y=c(11,13,12,19,13,22,28,32,36,32)
+plot(y~x)
+A=lm(x~y)
+summary(A)
+abline(A, col="red")
+
+predict(A)
+y
+
+rbind(y,predict(A))
+plot(A)
+
+par(mfrow=c(2,2))
+plot(A)
+
+
+
+A=iris
+library(tree)
+B=tree(Species~Sepal.Length+Sepal.Width+Petal.Length+Petal.Width,data=A)
+plot(B);text(B)      # , 에서 ; 으로 수정
+predict(B, type="class")
+
+#보충설명
+library(tidyr) ; library(dplyr)
+library(tree)
+iris %>% head()
+
+tree(Species~.,data=iris)
+
+
+
+library(MASS)
+library(randomForest)
+data(cpus)
+RF.2=randomForest(log10(perf)~syct+mmin+mmax+cach+chmin+chmax,data=cpus, importance=TRUE)
+RF.2
+varImpPlot(RF.2)
+predict(RF.2, data=cpus)
+
+
+reg.fit=lm(log10(perf)~syct+mmin+mmax+cach+chmin+chmax, data=cpus)
+summary(reg.fit)
+step(reg.fit)
+
+
+library(car)
+reg.fit2 = lm(log10(perf)~syct+mmin+mmax+cach, data=cpus)
+vif(reg.fit2)
+plot(reg.fit2)
+
+
+
+pr.out=prcomp(USArrests, scale=T)
+summary(pr.out)
+pr.out$rotation ; biplot(pr.out, scale=0)
+
+library(pls)
+library(ISLR)  #Hitters 자료가 ISLR에 있음
+Hitters
+pcr.fit=pcr(Salary~.,data=Hitters, scale=T)
+pcr.fit;summary(pcr.fit)
+pcr.pred=predict(pcr.fit, data=Hitters,ncomp=7)
+pcr.pred
+
+
+library(pls)
+pls.fit=plsr(Salary~., data=Hitters, scale=T)
+summary(pls.fit)
+pcr.pred=predict(pcr.fit, data=Hitters, ncomp=2)
+pcr.pred
+
+
+
+H1=na.omit(Hitters)  #na.omit해야 돌아감 맞나요?
+x=model.matrix(Salary~., H1)[,-1]  
+y=H1$Salary
+
+
+library(glmnet)
+grid=10^seq(10,-2,length=100)
+ridge.mod=glmnet(x,y,alpha=0, lambda=grid)
+summary(ridge.mod)
+
+cv.out=cv.glmnet(x,y,alpha=0)
+plot(cv.out)
+bestlam=cv.out$lambda.min
+ridge.pred=predict(ridge.mod, s=bestlam,x)
+ridge.pred
+
+
+library(MASS) ; library(tree)
+tree.boston=tree(medv~., data=Boston)
+plot(tree.boston);text(tree.boston)
+
+
+library(ipred)
+bag.fit=bagging(medv~., data=Boston, nbagg=25)
+summary(bag.fit)
+predict(bag.fit, data=Boston)
+
+library(randomForest)
+rf=randomForest(medv~., data=Boston, mtry=6)
+summary(rf)
+predict(rf, data=Boston)
+
+library(DescTools)
+y_obs = Boston$medv
+y_bag = predict(bag.fit, data=Boston)
+y_rf = predict(rf, data=Boston)
+
+# MSE(y_obs, y_bag)
+# MSE(y_obs, y_rf)
+
+
+library(ISLR) ; library(MASS)
+lda.fit=lda(Direction~Lag1+Lag2, data=Smarket)
+lda.fit
+
+
+library(ISLR)
+glm.ift=glm(Direction~Lag1+Lag2, data=Smarket, family="binomial")
+
+library(e1071)
+svmfit=svm(Direction~Lag1 + Lag2, data=Smarket, kernel="linear", cost=10, scale=F)
+plot(svmfit, data=Smarket[,c(2,3,9)])      # ) 빠짐
+
+
+#install.packages("neuralnet")
+library(neuralnet)
+m1 = scale(mtcars)
+neu = neuralnet(mpg~., data=m1, hidden = c(4,4))
+plot(neu)
+compute(neu,m1)$net.result
+
+
+
+# improve -----------------------------------------------------------------
+
+x=c(3, 4, 4, 6, 4, 7,  9, 10, 11, 11); y=c(11, 13, 12, 19, 13, 22, 28, 32, 36, 32)
+A=lm (y~x);  predict(A)
+library(DescTools)
+MSE(y, predict(A))
+RMSE(y, predict(A))
+
+
+B =tree(Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width, data=iris)
+D = predict(B , type="class")
+library(caret)
+confusionMatrix(D , iris$Species)
+
+library(ROCR)
+y_obs = ifelse("versicolor" == iris$Species,1,0)
+D = ifelse("versicolor" == predict(B, type="class"),1,0)
+pred = prediction(D , y_obs)
+plot(performance(pred, "tpr", "fpr"))
+
+
+temp = data.frame(x,y)
+A=lm(y~x, data=temp)
+
+temp1 = temp[1,]
+temp1[1,"x"] <- 5
+predict(A, newdata = temp1)
+
+
