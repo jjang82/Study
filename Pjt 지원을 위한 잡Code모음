@@ -1,0 +1,3188 @@
+# 시작에 앞서 ------------------------------------------------------------------
+
+#dir.create("D:/#.Secure Work Folder/lucasbaek")
+setwd("D:/#.Secure Work Folder/lucasbaek")
+getwd()
+
+
+# Coding style ------------------------------------------------------------
+# 지저분한 코드 예
+sc<-function(x,y,verbose=TRUE) {
+  n<-length(x)
+  if(n<=1||n!=length(y)) stop("Arguments x and y have different lengths: ",length(x)," and ",length(y),".")
+  if(TRUE%in%is.na(x)||TRUE%in%is.na(y)) stop(" Arguments x and y must not have missing values.")
+  cv<-var(x,y)
+  if(verbose) cat("Covariance = ",round(cv,4),".\n",sep= "")
+  return(cv)
+}
+
+# 깨끗한 코드 예
+CalculateSampleCovariance <- function(x, y, verbose = TRUE) {
+  # Computes the sample covariance between two vectors.
+  #
+  # Args:
+  #   x: One of two vectors whose sample covariance is to be calculated.
+  #   y: The other vector. x and y must have the same length, greater than one,
+  #      with no missing values.
+  #   verbose: If TRUE, prints sample covariance; if not, not. Default is TRUE.
+  #
+  # Returns:
+  #   The sample covariance between x and y.
+  n <- length(x)
+  # Error handling
+  if (n <= 1 || n != length(y)) {
+    stop("Arguments x and y have different lengths: ",
+         length(x), " and ", length(y), ".")
+  }
+  if (TRUE %in% is.na(x) || TRUE %in% is.na(y)) {
+    stop(" Arguments x and y must not have missing values.")
+  }
+  covariance <- var(x, y)
+  if (verbose)
+    cat("Covariance = ", round(covariance, 4), ".\n", sep = "")
+  return(covariance)
+}
+
+
+rm(list=ls())
+
+
+# R 기초 문법 -----------------------------------------------------------------
+
+x = 13
+y <- sqrt(9)
+4 * x -> z
+#어떤 객체에 값을 할당하고자 할 때, R에서도 물론 타 언어에서 흔히 지원하는 할당연산자 =를 사용할 수 있습니다. 그러나 R에서 이보다 더 널리 쓰이는 할당연산자는 <-과 ->입니다. <-는 우변의 결과를 좌변의 객체에, ->는 좌변의 결과를 우변의 객체에 대입합니다.
+
+
+ls()
+objects()
+rm(x)
+#현재까지 할당된 모든 객체의 이름을 확인하려면 ls() 혹은 objects() 함수를 사용합니다. 이미 할당된 객체를 삭제하기 위해서는 rm() 함수에 인자로 객체이름을 입력합니다.
+
+
+# 자료 구조 (7가지 할당 가능)
+
+x <- 2.7         # 실수
+y <- "string"    # 문자열
+z <- FALSE       # 논리값
+#첫 번째는 스칼라(Scalar)입니다. 단순히 객체에 하나의 값을 할당했을 때, 바로 그 할당되는 값을 R은 스칼라라고 지칭합니다. 스칼라 값에는 실수, 문자열, 논리값(TRUE, FALSE)의 3가지 자료형이 있습니다.
+
+v <- c(1.2, 2.7, 3.1, 4.9, 5.4)
+w <- c(TRUE, FALSE, FALSE)
+x <- c("a", "b", "c", "d")
+y <- 1.5:4.9     # 1.5 2.5 3.5 4.5
+
+#두 번째 자료구조는 벡터입니다. 벡터는 같은 자료형을 가진 스칼라 값들을 순서를 가지고 일렬로 나열한 자료구조입니다. 벡터는 함수 c()에 넣을 값들을 나열하여 생성하는 것이 일반적이나, 실수 값을 가진 벡터의 경우 시작값:종료값의 형태로도 생성할 수 있습니다. 이 경우 벡터는 시작값에서부터 종료값에 이르기 전까지 1씩 증가한 실수들로 채워질 것입니다.
+
+matrix(
+  c(1, 2, 4, 8, 16, 32),
+  nrow=2,
+  ncol=3
+)
+# 세 번째 자료구조는 행렬입니다. 행렬은 서로 다른 자료형을 가진 스칼라 값들을 2차원으로 나열한 자료구조입니다. 행렬은 함수 matrix(벡터, nrow=행개수, ncol=열개수)로 생성합니다.
+
+# 그 외에도 자료구조에는 행렬을 3차원 이상으로 확장한 배열(Array), 다른 언어의 1차원 연관배열(Associative Array)에 해당하는 리스트(List), 같은 항목간에 그룹이 지어져 있는 팩터(Factor), 그리고 위의 모든 자료구조를 2차원 자료구조로 모두 저장할 수 있는 데이터프레임(Data Frame)이 있습니다. 이들 자료구조에 대한 대해서는 Program Creek에 한 눈에 알아볼 수 있는 좋은 요약글이 있으니 살펴보시기 바랍니다.
+# https://www.programcreek.com/2014/01/vector-array-list-and-data-frame-in-r/
+
+
+# 산술 연산자
+3 + 2
+7 - 4
+11 * 5
+16 / 5
+16 %/% 5        # 정수나눗셈
+16 %% 5         # 나머지
+3^2             # 거듭제곱
+#에는 타 언어에서 찾아볼 수 있는 대부분의 산술연산자가 있습니다. 다만 나눗셈의 몫을 구하는 정수나눗셈 연산자 %/%가 존재한다는 점과, 나머지를 구하는 mod 연산자가 %%라는 점은 타 언어에 비추어 볼 때 생소한 부분입니다. 또한 거듭제곱의 경우, pow() 함수를 사용하지 않고도 연산자 만으로 간단하게 연산할 수 있습니다.
+
+
+
+# v <- c(1.2, 2.7, 3.1)
+v <- v + 1       # 2.2 3.7 4.1
+# 벡터나 행렬도 위처럼 산술연산자를 사용할 수 있습니다. 이 경우에는 벡터 혹은 행렬 안에 있는 모든 값에 연산을 하게 됩니다. 2개의 벡터나 행렬의 크기가 같다면 둘 사이에도 산술연산자를 사용할 수 있습니다. 반복문을 이용해야하는 다른 언어와 비교하면 문법도 간결하거니와 연산속도도 빠릅니다.
+
+
+
+# 조건문과 비교 - 논리 연산자 
+#  if(조건) {
+#  (조건이 Ture일때 실행될) 문장 또는 명령어
+#  } else {
+#  (조건이 False일때 실행될) 문장 또는 명령어 
+#  }
+
+grade = 75
+if(grade >=70) {
+  print('합격')
+} else {
+  print ('불합격')
+}
+
+vec1 = c(10,20,30)
+if(vec1 == 10) {
+  print('인사부')
+}else {
+  print('총무부')
+}
+
+# ifelse(조건, True일때 리턴할 값,  False일때 리터할 값)
+
+vec1 = c(10,20,30)
+ifelse(vec1 ==10, '인사부', '총무부')
+
+ifelse(vec1 ==10, '인사부', 
+       ifelse(vec1 ==20,'재무부','총무부'))
+
+
+#타 언어에서 대부분 지원하고 있는 비교연산자 <, <=, >, >=, ==, !=는 R에서도 모두 사용할 수 있습니다. 비교연산자를 사용하면 TRUE와 FALSE 중의 하나를 결과로 얻을 수 있습니다. 이 결과는 논리연산자 ||과 &&을 통하여 OR과 AND 연산을 할 수도 있습니다. 
+
+#R의 조건문은 다른 대부분의 언어들과 마찬가지로 if문과 else문으로 구성되어 있습니다. if문 안의 값이 TRUE인지 FALSE인지에 따라서 작동여부가 결정되는 것도 다른 언어와 동일합니다.
+
+#반복문 
+# R의 반복문에는 for문과 while문이 있습니다. 다른 언어에서 찾아볼 수 있는 do-whil문은 R에서는 없습니다.
+
+i <- 0
+while(i < 10) {
+  i <- i + 1
+}
+# R의 while문은 다른 언어들과 같이 while(구문) { } 의 구조를 가집니다. 소괄호 안의 결과가 TRUE가 되는 한, 중괄호 안의 로직은 계속하여 반복될 것입니다.
+
+sum <- 0
+for(i in c(1, 4, 7)) {
+  sum <- sum + i
+}
+
+# 한편 for문은 문법이 조금 독특한데, for(변수명 in 벡터) { } 의 구조를 가지고 있습니다. for문이 실행되면 객체 i에 벡터 안에 있는 값들이 순서대로 할당되어 들어올 것입니다. 이것은 자바스크립트의 for-in문이나 PHP의 foreach문과 유사한 측면이 있습니다.
+
+sum <- 0
+for(i in 5:15) {
+  if(i%%2 == 0)
+  {
+    next;
+  }
+  if(i%%10 == 0)
+  {
+    break;
+  }
+  sum <- sum + i
+}
+
+#반복문을 중간에 중지할 때는 다른 언어와 마찬가지로 break문을 사용합니다. 한편 반복문 내의 남은 구문을 모두 통과할 때는 다른 언어는 보통 continue문을 사용하지만, R에서는 같은 구문이 next문으로 바뀌어 있어 주의가 필요합니다.
+
+# 사용자 정의 함수 
+f <- function(n){
+  sum <- 0;
+  for(i in 1:n){
+    sum <- sum + i
+  }
+  return (sum)
+}
+f(12)
+
+
+#R에서도 물론 사용자가 직접 함수를 만들고, 이것을 객체에 담아 사용할 수 있습니다. 함수선언 또한 타 언어와 마찬가지로 function(인자, 인자, …) { } 구문을 따르고 있습니다.
+
+#함수실행을 마치고 값을 반환할 때는 return() 구문을 사용합니다. 많은 언어에서는 return문에서 반환할 값을 정할 때 별도로 괄호를 사용하지 않습니다만, R에서는 반드시 return문에서 반환할 값을 소괄호로 감싸야 합니다.
+
+
+f <- function(n){ return (n+1) }
+f(12)   # 13
+g <- f
+g(12)   # f(12)와 동일하게 작동 
+sum <- f
+sum(12) # f(12)와 동일하게 작동 
+
+#함수는 한 객체에서 다른 객체로 복제하여 동일하게 사용할 수 있습니다. 이 규칙은 사용자 정의 함수 만이 아니라 내장함수에도 적용됩니다.
+
+#특별히 주의해야 하는 점은 내장함수에도 다른 함수를 할당하는 것이 가능하다는 것입니다. 위 예제에서 등장한 sum()이라는 함수는 본래 벡터나 행렬 안에 있는 요소의 총합을 구하는 내장함수입니다. 그러나 위처럼 사용자 정의 함수 f()를 할당하여 실행할 경우, f()와 동일하게 작동하는 것을 볼 수 있습니다.
+
+
+# 기초적인 수학적 계산
+sin(pi)         # 1.224606e-16
+log(3)          # 1.098612 (자연로그)
+log10(100)      # 2  (상용로그)
+floor(3.14)     # 3  (버림)
+ceiling(5.87)   # 6  (올림)
+round(4.65)     # 5  (반올림)
+sqrt(9)         # 3  (제곱근)
+min(c(1,5,7))   # 1  (최소값)
+max(c(2,6,9))   # 9  (최대값)
+mean(c(3,6,9))  # 6  (평균)
+sum(c(1,2,4,7)) # 14  (합계)
+sd(c(1,2,3,4))  # 1.290994  (표준편차)
+runif(2, 1, 10) # 난수 2개를 벡터로 생성(1 초과 10 미만
+
+# (편) 미분  *작동안됨 체크 필요 
+help(expression)
+f = expression(2*x^3 - y*x^2 + 2*y^2 + 1)
+D(f, "x")
+D(f, "y")
+
+
+#정적분 
+f <- function(x) 2*x^3 - 3*x^2 + 1
+integrate(f, 0, 3)
+
+#R의 수학 관련 기능지원은 폭넓어서, 위처럼 미분과 정적분도 몇 줄의 소스코드로 가능합니다. 이 외에도 데이터마이닝에서 사용하는 회귀분석이라던가 군집화 알고리즘도 내장함수로 제공하고 있어 편리하게 이용할 수 있습니다.
+
+
+
+
+
+# 활용가능한 Data Sets 체크 ------------------------------------------------------
+
+# datasets 패키지에서 제공하는 다양한 자료들과 도움말 
+help(package='datasets')
+# ggplot2 패키지에서 제공되는 데이터
+data(package='ggplot2')
+# 현재 실행환경에서 로드되어서 사용가능한 모든 데이터를 살펴보려면 옵션 없이
+data()
+
+
+# Package Install (단, 기 설치 시 생락가능) ----------------------------------------
+install.packages("ctv")
+install.views("MachineLearning")
+update.views("MachineLearning")
+install.packages("caret", dependencies = c("Depends", "Suggests"))
+install.packages(c("dplyr", "MASS", "glmnet", "randomForest", "gbm", "rpart", "boot", "data.table", "gridExtra"))
+
+
+# 데이터 불러오기 csv, Excel -----------------------------------------------------
+
+# Data 불러오기   #excel 불러오기는 readxl
+# install.packages("readxl")  #readxl 설치
+# library(readxl) # readxl 부착
+# df <- read_excel( DAT/RAW/201907_BOIS_DATA.xls, # 경로
+#    sheet = "cust_profile", # 읽을 시트 이름 
+#    range = "B3 : E8" , # 읽을 셀 범위 
+#    col_names = TRUE,  # TRUE는 첫 번째 행을 열 이름으로 사용합니다
+#    col_types = "추측", # 열의 유형을 추측
+#   na = "NA") # 결 측값에 사용할 문자열의 문자형 벡터
+
+
+# Data 불러오기 CSV
+
+#library(readr)
+#library(stringr)
+#library(plyr)
+#library(dplyr)
+
+#tmp <- read.csv('DAT/RAW/water_packing.csv', stringsAsFactors = F)
+
+
+
+
+
+# Package 호출 --------------------------------------------------------------
+
+library("dplyr", "MASS", "glmnet", "randomForest", "gbm", "rpart",  "boot", "data.table", "gridExtra") #예전에일괄 되었는데, 안됨
+
+library("dplyr", "MASS", "glmnet", "randomForest")
+        
+library(dplyr)
+library(MASS)
+library(glmnet)
+library(gbm)
+library(rpart)
+library(boot)
+library(data.table)
+library(gridExtra)
+library(randomForest)
+      
+
+# R에서 SQL연습
+# install.packages("sqldf")
+library(sqldf)
+sqldf("select * from iris")
+sqldf("select count(*) from iris")
+sqldf("select Species, count(*), avg(`Sepal.Length`)
+      from iris
+      group by `Species`")
+sqldf("select Species, `Sepal.Length`, `Sepal.Width`
+      from iris
+      where `Sepal.Length` < 4.5
+      order by `Sepal.Width`")
+
+library(dplyr)
+(df1 <- data_frame(x = c(1, 2), y = 2:1))
+(df2 <- data_frame(x = c(1, 3), a = 10, b = "a"))
+sqldf("select *
+    from df1 inner join df2
+      on df1.x = df2.x")
+sqldf("select *
+    from df1 left join df2
+      on df1.x = df2.x")
+
+
+# install.packages("foreign")
+library(foreign)
+x <- read.dbf(system.file("files/sids.dbf", package="foreign")[1])
+dplyr::glimpse(x)
+summary(x)
+
+
+# 데이터 전처리 -----------------------------------------------------------------
+  # 데이터 전처리란 작업 할 raw data를 구성하는 관측치와 변수들을 제거, 
+  # 수정 혹은 추가하여 최종적으로 분석에 사용할 Data Set을 만드는 과정
+  # 왜 dplyr 패키지 인가?
+  # dplyr 패키지의 가장 큰 장점은 %>%(파이프, Pipe) 연산자라고 생각합니다. 
+  # 전처리 외에도 파이프 연산자 덕에 가독성이 굉장히 좋아집니다. 
+  # 수학적으로 말하자면 합성함수 o(circle)와 유사한 기능을 합니다. 
+  # 다만 둘의 차이점은 합성함수 (f o g)(x) == f(g(x)) 처럼 뒤에서부터 
+  # 앞의 순서로 계산하지만 dplyr 의 파이프 연산자는 
+  # DataFrame %>% function1() %>% function2() 순서대로 진행됩니다.
+  # dplyr 패키지 함수들 select()
+    # filter()
+    # rename()
+    # mutate()
+    # summarize()
+    # group_by()
+    # arrange()
+    # sample_n() & sample_frac()
+
+# 패키지 장착
+library(dplyr)
+library(ggplot2)
+
+# 예제 데이터 확인
+ggplot2::diamonds
+
+# ggplot 내장 데이터에 대한 구조 확인
+summary(diamonds)
+DT::datatable(diamonds)
+str(diamonds)
+dplyr::glimpse(diamonds)
+
+
+# dim(DataName)의 결과값을 순서대로 m, n 이라 할 때 m은 관측치의 갯수, 
+  # n은 변수의 개수라는 뜻이다. 
+  # 이 때 연구자 본인이 판단했을 때 전체 n개의 변수 중에서 필요한 변수들만 
+  # 선택(추출) 하는 함수가 dplyr::select()이다. 기본적인 입력 방식은 다음과 같다.
+
+# DataFrame %>% select(VariableName)
+
+# Color 변수만
+colnames(diamonds)
+diamonds %>%  select(color)
+
+# colors()# 변수를 2개 이상 select 할 경우 cut, color 변수 추출
+
+diamonds %>%
+  select(cut, color)
+
+# 변수 이름은 모르고 위치를 아는 경우
+diamonds %>%
+  select(1:4)
+
+# 변수 시작하는 스펠링을 알때 ex) c로 시작하는 변수들만 선택
+
+
+diamonds %>%
+  select(starts_with("c"))
+
+
+# 변수의 끝나는 스펠링을 알때 ex) e로 끝나는 변수들만 선택
+
+diamonds %>%
+  select(ends_with("e"))
+
+
+# 변수가 포함된 스펠링을 아는 경우
+
+diamonds %>%
+  select(contains("r"))
+
+# filter() 조건에 맞는 관측치 추출
+
+# cut이 Premium 인경우만 추출
+diamonds %>% 
+  filter(cut == "Premium")  
+
+# carat이 0.22인 경우만 추출
+diamonds %>% 
+  filter(carat == 0.22)  
+
+# carat이 0.22이 아닌 경우만 추출
+diamonds %>% 
+  filter(carat != 0.22)  
+
+
+# price가 950 이하인 다이아만 추출
+diamonds %>%
+  filter(price <= 950)
+ 
+# 2가지 조건인 경우 다이아몬드 가격이 950 이하이고, 800이상인 것만 고를 때
+
+diamonds %>%
+  filter(price <= 950 & price >= 800)
+
+# Cut이 Premium이면서 Price가 10000 이상인 경우
+diamonds %>%
+  filter(price >= 10000 & cut == "Premium")
+
+
+# Cut이 Premium이거나 Price가 10000 이상인 경우
+diamonds %>%
+  filter(price >= 10000 | cut == "Premium")
+
+# 데이터를 이루는 기존 변수들의 변수명을 바꾸는 경우에 사용
+  # 데이터를 이루는 기존 변수들의 변수명을 바꾸는 경우에 사용. 
+  # 데이터 분석을 하다보면 간혹 RawData들의 변수명이 V1, V2, V3, …. 
+  # 식으로 나와있고 별도로 CodeBook 이 같이 있는 경우가 있다. 
+  # 이런 경우 분석에 필요한 몇가지 변수들의 이름을 좀 더 직관적으로 
+  # 편하게 알아볼 수 있도록 변환 할 때 사용하는 것이 rename() 이다.
+  # 입력 방식은 다음과 같이 새로 저장할 변수명 = 기존 변수명 형태로 넣어주면 된다.
+  # DataFrame %>% rename(New.Vaiable.Name = Variable.Name)
+
+diamonds <- diamonds %>%
+  rename(width  = x,
+         length = y,
+         heigth = z)
+
+colnames(diamonds)
+
+# mutate()  위에 서술한 rename()은 변수명만 변환할 때 사용하는 것이다. 
+  # 지금 설명할 mutate()는 기존에 존재하던 변수들을 이용하여 파생변수를 만들거나
+  # 기존 변수를 변환할 때 사용한다. 
+  # 입력방식은 rename()과 유사하게 변환명 = 기존 변수명 형태로 입력하면 된다.
+  # 예제 기존에 있던 price 를 이용하여 3933 이상을 Expensive,
+  # 그 외에는 Cheap이라는 질적 자료로 이루어진 price2 파생변수를 만들어보자.
+
+diamonds <- diamonds %>%
+  mutate(price2 = ifelse(price >= 3933, "Expensive", "Cheap"))
+
+str(diamonds)
+
+
+# 만약 범주를 2개 이상 나누고 싶다면, ifelse()를 2번 이상 사용
+  # 예를 들어 price가 5324 이상인 것들을 High, 950 이상부터 5324 미만을 Middle,
+  # 950 미만을 Low로 하는 질적자료 price3 파생변수를 만들어보자.
+
+diamonds <- diamonds %>%
+  mutate(price3 = ifelse(price >= 5324, "High",
+                         ifelse(price >= 950, "Middle", "Low")))
+
+str(diamonds)
+
+# 요약 통계량을 구할때 min(), max(), mean(), sum(), var(), sd(), median(), IQR()
+# 이외에도 관측치 갯수 구하는 n(), 고유 범주들의 갯수 알려주는 n_distinct() 
+
+dia.table <- diamonds %>%
+  summarize(n.obs     = n(),
+            n.cut     = n_distinct(cut),
+            max.price = max(price))
+
+dia.table
+
+
+
+# 데이터에 있는 질적 자료들을 그룹핑해주는 함수 
+  # DataFrame %>% group_by(VariableName) 형태로 입력해주면 되며
+  # summarize()와 함께 사용할 경우 그룹별 요약통계량을 구해주기 때문에 더욱 강력하다.
+  # 아래와 같이 실행하면 cut의 범주별로 
+  # 그룹을 만든 후 그룹별 관측치 개수, 최고가, 평균 carat을 구할 수 있다.
+
+diamonds %>%
+  group_by(cut) %>%
+  summarize(n.obs      = n(),
+            max.price  = max(price),
+            mean.carat = mean(carat))
+
+
+# 한 가지 추가한다면 cut의 순서가 Fair, Good, Very Good, Ideal, Premium 인 것이 
+# 더 보기 편하다.위에 서술한 mutate()를 이용하여 수정한다면 아래와 같이 하면 된다.
+
+diamonds %>%
+  mutate(cut = factor(diamonds$cut,
+                      levels = c("Fair", "Good", "Very Good",
+                                 "Ideal", "Premium"))) %>%
+  group_by(cut) %>%
+  summarize(n.obs      = n(),
+            max.price  = max(price),
+            mean.carat = mean(carat))
+
+
+# arrange() 연구자가 선택한 변수에 대하여 오름차순 혹은 내림차순으로 나열하게 
+  # 해주는 함수로서 디폴트는 오름차순으로 되어있다. 
+  # 단순하게 다이아몬드 가격에 대해 오름차순으로 나열하고 싶다면 아래와 같이 실행하면 된다.
+
+
+diamonds %>%
+  arrange(price)
+
+# 내림차순은?
+
+ diamonds %>%
+   arrange(desc(price))
+ 
+ 
+ # 표본 집단만 뽑아서 사용하는 함수는?  sample_n() & sample_frac()
+ # 전체 관측치(모집단)에서 표본 집단을 뽑을 때 사용하는 함수이며 
+  # 디폴트는 비복원 추출이다. 재현 가능한 연구를 위해서는 set.seed()를 이용해서 
+  # seed 를 지정해줘야 하며 복원 추출을 하고 싶은 경우 replace = TRUE 로 설정해주면 된다.
+  # 원하는 갯수만큼 추출하는 경우에는 sample_n()을, 비율로 추출하는 경우에는 sample_frac()을 이용하면 된다.
+ 
+  # 전체 관측치 중에서 100개만 비복원 추출
+ diamonds %>%
+   sample_n(100)
+ 
+ 
+ # 100개만 복원 추출
+ diamonds %>%
+   sample_n(100,
+            replace = T)
+ 
+ 
+ # 전체 데이터중에 30% 비복원 추출
+ diamonds %>%
+   sample_frac(.3)
+ 
+ 
+ # 전체 데이터중에 30% 복원 추출
+ diamonds %>%
+   sample_frac(.3,
+               replace = T)
+ 
+ 
+
+# 데이터 정제 ------------------------------------------------------------------
+
+ # 결측치 정제하기
+ # - 결측치(Missing Value)는 누락된 값, 비어 있는 값의미
+ # - 결측치로 이인해 함수가 적용이 안되거나 분석결과가 왜곡되는 문제가 발생할 수 있다.
+ # - 결측치를 없애는 정제과정이 필요하다.
+ # - R에서 결측치는 NA로 표시된다. 결측지를 확인하기 위해서는 is.na()로 확인한다.
+ # - 결측치를 제거하기위해 is.na()를 filter()적용하면 결측치 행을 제거할 수 있다.
+ 
+ #결측치가 포함된 데이터 생성
+ 
+ df <- data.frame(gender = c("M", "F", NA, "M", "F"),
+                  score = c(5, 4, 3, 4, NA))
+ df
+ 
+ is.na(df)               # 결측치 확인
+ table(is.na(df))        # 결측치 빈도 출력
+ table(is.na(df$gender))    # gender 결측치 빈도 출력
+ table(is.na(df$score))      # score 결측치 빈도 출력
+ 
+ #결측치가 포함된 데이터는 함수 적용시 연산되지 못하고 NA값 출력한다.
+ mean(df$score)  # 평균 산출
+ sum(df$score)   # 합계 산출
+ 
+ #결측치 제거
+ library(dplyr)                # dplyr 패키지 로드
+ df %>% filter(is.na(score))   # score가 NA인 데이터만 출력
+ df %>% filter(!is.na(score))  # score 결측치 제거
+ 
+ #결측치가 제거되면 함수가 적용된다.
+ df_nomiss <- df %>% filter(!is.na(score))  # score 결측치 제거
+ mean(df_nomiss$score)                      # score 평균 산출
+ sum(df_nomiss$score)                       # score 합계 산출
+ 
+ #성별및 점수의 결측치 제거
+ df_nomiss <- df %>% filter(!is.na(score) & !is.na(gender))  # score, gender 결측치 제거
+ df_nomiss                                                # 출력
+ 
+ 
+ #na.omit()를 이용하면 결측치가 있는행을 한번에 제거할 수 있다.
+ df_nomiss2 <- na.omit(df)  # 모든 변수에 결측치 없는 데이터 추출
+ df_nomiss2                     # 출력
+ 
+ 
+ 
+ # - 함수 자체에 결측치 제외 기능(na.rm)이 있는경우는 그기능을 사용하여 함수를 적용한다.
+ # 결측치 제외 기능이 없을시에는 fillter()로 결측지를 제거한다.
+ 
+ df
+ mean(df$score, na.rm = T)  # 결측치 제외하고 평균 산출
+ sum(df$score, na.rm = T)   # 결측치 제외하고 합계 산출
+ 
+ exam <- read.csv("csv_exam.csv")  # 데이터 불러오기
+ exam[c(3, 8, 15), "math"] <- NA   # 3, 8, 15행의 math에 NA 할당
+ exam
+ 
+ exam %>% summarise(mean_math = mean(math))  # math 평균 산출
+ 
+ # math 결측치 제외하고 평균 산출
+ exam %>% summarise(mean_math = mean(math, na.rm = T))  
+ 
+ exam %>% summarise(mean_math = mean(math, na.rm = T),      # 평균 산출
+                    sum_math = sum(math, na.rm = T),        # 합계 산출
+                    median_math = median(math, na.rm = T))  # 중앙값 산출
+ 
+ 
+
+ # 결측치를 제거 하는 대신 다른 값으로 대체할 수 있다.
+ 
+ mean(exam$math, na.rm = T) # 결측치 제외하고 math 평균 산출
+ 
+ exam$math <- ifelse(is.na(exam$math), 55, exam$math)  # math가 NA면 55로 대체
+ table(is.na(exam$math))                               # 결측치 빈도표 생성
+ exam                                                  # 출력
+ mean(exam$math)                                       # math 평균 산출
+ 
+ # 이상치 정제하기
+ # - 정상범주에서 크게 벗어난 값을 이상치(Outlier)라고 한다.
+ # - 오류는 아니지만 굉장히 드물게 극단적인 값이 있을 수도 있다.
+ # - 분석적 이런 이상치를 제거 해야 한다.
+ # - 이상치를 결측치로 변화하여 결측치를 제거한다.
+ 
+ # 이상치값을 성별에 3, 점수에 6을 넣어서 생성한다.
+ 
+ 
+ outlier <- data.frame(gender = c(1, 2, 1, 3, 2, 1),
+                       score = c(5, 4, 3, 4, 2, 6))
+ outlier
+ 
+ table(outlier$gender)
+ table(outlier$score)
+ 
+ # gender가 3이면 NA 할당
+ outlier$gender <- ifelse(outlier$gender == 3, NA, outlier$gender)
+ outlier
+ 
+ # score가 5보다 크면 NA 할당
+ outlier$score <- ifelse(outlier$score > 5, NA, outlier$score)
+ outlier
+ 
+ outlier %>% 
+   filter(!is.na(gender) & !is.na(score)) %>%
+   group_by(gender) %>%
+   summarise(mean_score = mean(score))
+ 
+ 
+ 
+ #결측치가 포함된 데이터 생성
+ 
+ df <- data.frame(gender = c("M", "F", NA, "M", "F"),
+                  score = c(5, 4, 3, 4, NA))
+ df
+ 
+ is.na(df)               # 결측치 확인
+ table(is.na(df))        # 결측치 빈도 출력
+ table(is.na(df$gender))    # gender 결측치 빈도 출력
+ table(is.na(df$score))      # score 결측치 빈도 출력
+ 
+ #결측치가 포함된 데이터는 함수 적용시 연산되지 못하고 NA값 출력한다.
+ mean(df$score)  # 평균 산출
+ sum(df$score)   # 합계 산출
+ 
+ #결측치 제거
+ library(dplyr)                # dplyr 패키지 로드
+ df %>% filter(is.na(score))   # score가 NA인 데이터만 출력
+ df %>% filter(!is.na(score))  # score 결측치 제거
+ 
+ #결측치가 제거되면 함수가 적용된다.
+ df_nomiss <- df %>% filter(!is.na(score))  # score 결측치 제거
+ mean(df_nomiss$score)                      # score 평균 산출
+ sum(df_nomiss$score)                       # score 합계 산출
+ 
+ #성별및 점수의 결측치 제거
+ df_nomiss <- df %>% filter(!is.na(score) & !is.na(gender))  # score, gender 결측치 제거
+ df_nomiss                                                # 출력
+ 
+ 
+ #na.omit()를 이용하면 결측치가 있는행을 한번에 제거할 수 있다.
+ df_nomiss2 <- na.omit(df)  # 모든 변수에 결측치 없는 데이터 추출
+ df_nomiss2                     # 출력
+ 
+ 
+ 
+ # 상자그림을 그려서 이상치 체크
+ 
+ boxplot(mpg$hwy) #상자그림
+ 
+ 
+ # 상자 그림 통계치 출력
+ boxplot(mpg$hwy)$stats 
+
+   
+ # 12~37 벗어나면 NA 할당
+   mpg$hwy <- ifelse(mpg$hwy < 12 | mpg$hwy > 37, NA, mpg$hwy)
+ 
+ # 결측치 확인
+ table(is.na(mpg$hwy))  
+ 
+ #결측치 제외하고  drv그룹별 평균값출력
+ mpg %>%
+   group_by(drv) %>%
+   summarise(mean_hwy = mean(hwy, na.rm = T))
+ 
+
+
+# 데이터 합치기 -----------------------------------------------------------------
+# https://rfriend.tistory.com/51 참조
+ 
+
+# 행결합 ---------------------------------------------------------------------
+
+ ## 데이터 프레임 생성
+ cust_id <- c("c01","c02","c03","c04")
+ last_name <- c("Kim", "Lee", "Choi", "Park")
+ cust_mart_1 <- data.frame(cust_id, last_name)
+ 
+ cust_mart_1
+
+ cust_mart_2 <- data.frame(cust_id = c("c05", "c06", "c07"),
+                           last_name = c("Bae", "Kim", "Lim"))
+ cust_mart_2
+ 
+
+ ## (1) 행 결합 (위 + 아래) rbind(A, B) 
+
+ cust_mart_12 <- rbind(cust_mart_1, cust_mart_2)
+ cust_mart_12
+
+ # rbind()는 row bind 의 약자입니다. rbind()를 무작정 외우려고 하지 마시고, row bind의 약자라는걸 이해하시면 됩니다. 
+ # 위의 행 결합 rbind()를 하기 위해서는 결합하려는 두개의 데이터 셋의 열의 갯수와 속성, 이름이 같아야만 합니다. 
+ 
+ #아래의 예시 처럼 만약 칼럼의 갯수가 서로 다르다면 (cust_mart_12는 열이 2개, cust_mart_3은 열이 3개) 열의 갯수가 맞지 않는다고 에러 메시지가 뜹니다.
+ 
+  cust_mart_3 <- data.frame(cust_id = c("c08", "c09"), 
+                            last_name = c("Lee", "Park"), 
+                            gender = c("F", "M"))
+ 
+  cust_mart_3
+  rbind(cust_mart_12, cust_mart_3)  # Error 메세지 뜸
+  
+
+ # 아래의 예처럼 칼럼의 이름(cust_mart_12 는 cust_id, last_name 인 반면, cust_mart_4는 cust_id, first_name)이 서로 다르다면 역시 에러가 납니다.
+  cust_mart_4 <- data.frame(cust_id = c("c10", "c11"), 
+                            first_name = c("Kildong", "Yongpal"))
+  cust_mart_4
+  
+  rbind(cust_mart_12, cust_mart_4) # Error 메세지 뜸
+  
+
+# 열 결합 --------------------------------------------------------------------
+
+  ## (2) 열 결합 cbind(A, B)
+  cust_mart_5 <- data.frame(age = c(20, 25, 19, 40, 32, 39, 28), 
+                            income = c(2500, 2700, 0, 7000, 3400, 3600, 2900))
+  cust_mart_12
+  
+  cust_mart_5
+
+  cust_mart_125 <- cbind(cust_mart_12, cust_mart_5)
+
+  cust_mart_125
+  
+  # cbind()도 열 결합을 하려고 하면 서로 결합하려는 두 데이터 셋의 관측치가 서로 동일해야만 함
+  
+  cust_mart_6 <- data.frame(age = c(34, 50),
+                            income = c(3600, 5100))
+  
+    
+  cust_mart_6
+  
+  cbind(cust_mart_125, cust_mart_6) # Error 뜰꺼임
+  
+  
+
+# 동일 Key 기준 결합 ------------------------------------------------------------
+
+  # 동일 Key 값 기준 결합 : merge(A,B, by='key')
+  
+  # 두개의 데이터셋을 열 결합할 때 동일 key 값을 기준으로 결합을 해야 할 때가 있습니다. 
+  # cbind()의 경우 각 행의 관찰치가 서로 동일 대상일 때 그리고 갯수가 같을 때 가능하다고 했는데요,
+  # 만약 각 행의 관찰치가 서로 동일한 것도 있고 그렇지 않은 것도 섞여 있다면 그때는 cbind()를 사용하면 안됩니다.  
+  # 이때는 동일 key 값을 기준으로 결합을 해주는 merge(A, B, by='key')를 사용해야만 합니다.
+  
+  cust_mart_12
+  
+  cust_mart_7 <- data.frame(cust_id = c("c03", "c04", "c05", "c06", "c07", "c08", "c09"), 
+                            buy_cnt = c(3, 1, 0, 7, 3, 4, 1))
+  
+
+  
+  cust_mart_127_cbind <- cbind(cust_mart_12, cust_mart_7)
+
+  cust_mart_127_cbind
+  
+  # cust_mart_127_cbind 확인해보면 이상하게 결합되어 있음... 
+  # SQL에 익숙한 사람은 알겠지만, merge에는 기준을 어느쪽에 두고 어디까지 포함
+  # 하느냐에 따라 inner join, Outer join, Left Outer join, Right outer Join 등 4가지 종류가 있음
+  
+  # merge() : Inner Join 
+  
+  cust_mart_127_innerjoin <- merge(x = cust_mart_12, 
+                                   y = cust_mart_7, 
+                                   by = 'cust_id')
+  
+  cust_mart_127_innerjoin
+  
+  
+  # merge() : Outer Join 
+  cust_mart_127_outerjoin <- merge(x = cust_mart_12, 
+                                   y = cust_mart_7, 
+                                   by = 'cust_id', 
+                                   all = TRUE)
+  cust_mart_127_outerjoin
+  
+  
+  
+  # merge() : Left Outer Join
+  cust_mart_127_leftouter <- merge(x = cust_mart_12, 
+                                   y = cust_mart_7, 
+                                   by = 'cust_id',
+                                   all.x = TRUE)
+  
+  cust_mart_127_leftouter
+  
+  
+  # merge : Right Outer Join
+  cust_mart_127_rightouter <- merge(x = cust_mart_12,
+                                    y = cust_mart_7, 
+                                    by = 'cust_id',
+                                    all.y = TRUE)
+  cust_mart_127_rightouter
+  
+  
+  # 이상 merge() 함수의 4가지 유형의 join 에 대하여 알아보았습니다.  
+  # 마지막으로, merge() 함수는 2개의 데이터 셋의 결합만 가능하며, 
+  # 3개 이상의 데이터 셋에 대해서 key 값 기준 merge() 결합을 하려고 하면 에러가 나는 점 유의하시기 바랍니다.
+  
+  
+  merge(cust_mart_12, cust_mart_5, cust_mart_7, by = 'cust_id') # Error 날끄야
+  
+  
+  
+  
+  
+     
+#  가로로 합치기
+# - 두개의 데이터 프레임을 만들고 dplyr패키지의 left_join()을 이용하여 데이터를 
+#   가로로 합친다.
+# - 기준변수명은 by에 지정한다.
+
+
+ 
+# 중간고사 데이터 생성
+test1 <- data.frame(id = c(1, 2, 3, 4, 5),           
+                    midterm = c(60, 80, 70, 90, 85))
+
+# 기말고사 데이터 생성
+test2 <- data.frame(id = c(1, 2, 3, 4, 5),           
+                    final = c(70, 83, 65, 95, 80))
+
+test1  # test1 출력
+test2  # test2 출력
+
+total <- left_join(test1, test2, by = "id")  # id 기준으로 합쳐서 total에 할당
+total                                        # total 출력
+
+
+# 각반학생 명단에 담임교사 명단 추가하기
+
+
+name <- data.frame(class = c(1, 2, 3, 4, 5),
+                   teacher = c("kim", "lee", "park", "choi", "jung"))
+name
+
+exam_new <- left_join(exam, name, by = "class")
+exam_new
+
+
+
+# 세로로 합치기
+# - bind_rows()함수를 이용하여 데이터를 세로로 합친다.
+# - 우선 다섯명이 시험을 보고 나중에 다섯명이 따로 시험본결과를 
+#   세로로 합친다.
+
+
+# 학생 1~5번 시험 데이터 생성
+
+group_a <- data.frame(id = c(1, 2, 3, 4, 5),
+                      test = c(60, 80, 70, 90, 85))
+
+# 학생 6~10번 시험 데이터 생성
+group_b <- data.frame(id = c(6, 7, 8, 9, 10),
+                      test = c(70, 83, 65, 95, 80))
+
+group_a  # group_a 출력
+group_b  # group_b 출력
+
+group_all <- bind_rows(group_a, group_b)  # 데이터 합쳐서 group_all에 할당
+group_all                                 # group_all 출력
+
+
+
+
+
+
+ 
+ 
+ 
+# 데이터 탐색 - ggplot ------------------------------------------------------------------
+
+# 날짜 POSIXct Type일때, X축간격 임의 설정
+library(tidyverse)
+library(ggplot2)
+library(data.table)
+library(lubridate)
+library(timeDate)
+library(scales)   #date_breaks 함수 반영
+
+str(df)
+colnames(df)
+df$date1 <- strptime(df$date1,"%Y-%m-%d %H:%M")
+head(df)
+
+df$date1 <- as.POSIXct(df$date1) 
+
+g1 <- ggplot(data = df)
+g1 + geom_point(aes(x = date1, y= dust.mean),size = 1, alpha = 0.3) + 
+  scale_y_continuous(breaks = seq(0,100,10)) +
+  # scale_x_date(date_labels="%y-%m-%d %H:%M") +
+  ggtitle("청주 전지재료_K4 표면전처리_유량_백필터호퍼_백필터 분진 PV") +
+  scale_x_datetime(labels = date_format("%m/%d", tz ="UTC"),
+                   breaks = date_breaks("1 day"))
+
+
+
+
+
+# Iris Plot 
+
+library(ggplot2)
+ggplot(data, aes()) + geom_point()
+
+# [1] "Sepal.Length" "Sepal.Width"  "Petal.Length" "Petal.Width"  "Species"   
+ggplot(iris, aes(Petal.Length, Petal.Width, color=Species)) + 
+  geom_point(size=5, alpha=0.5)
+
+ggplot(iris, aes(Petal.Length, Petal.Width, color=Species)) + 
+  geom_point(size=5, alpha=0.5) +
+  facet_wrap(~Species)
+
+library(plotly)
+g <- ggplot(iris, aes(Petal.Length, Petal.Width, color=Species)) + 
+  geom_point(size=5, alpha=0.5)
+ggplotly(g)
+
+
+# aes_string
+ggplot(iris, aes_string("Petal.Length", "Petal.Width", color="Species")) + 
+  geom_point(size=5, alpha=0.5)
+
+for (var in names(iris)) {
+  
+  g <- ggplot(iris, aes_string(var, "Petal.Width", color="Species")) + 
+    geom_point(size=5, alpha=0.5)
+  
+  print(g)
+}
+
+
+
+
+
+
+#
+시각적 맵핑(Aesthetic mapping)
+맵핑 : 어떤 시각적 특성을 사용할 것인가?
+  x, y, + facet_grid(y ~ x) 그리고 + fact_wrap(~g)
+color, fill
+shape
+size
+alpha : 여러 기하적 대상(예. 점)이 겹칠 때 유용하다.
+스케일(scale) : 어떻게 맵핑할 것인가?
+  x, y : scale_x_log10(), scale_x_reverse(), scale_x_sqrt()
+이산형 : color, fill
+scale_fill_brewer(palette= )
+scale_fill_grey(start= , end= , na.value= )
+연속형 : color, fill
+scale_fill_distiller(palette= )
+scale_fill_gradient(low= , high= )
+scale_fill_gradient(low= , high= , mid= , midpoint= )
+scale_fill_gradientn(colours= )
+그 밖에
+scale_*_manual(values= )
+scale_*_date(date_labels="%m/%d")
+scale_*_datetime()
+
+
+#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 테이터 탐색_gapminder-------------------------------
+# 기본적인 gapminder 자료 처리
+
+# 자료를 로드한다
+library(gapminder)
+
+# 행과 열 선택
+gapminder[gapminder$country=='Korea, Rep.', c('pop', 'gdpPercap')]
+
+# 행 선택
+gapminder[gapminder$country=='Korea, Rep.', ]
+gapminder[gapminder$year==2007, ]
+gapminder[gapminder$country=='Korea, Rep.' & gapminder$year==2007, ]
+gapminder[1:10,]
+head(gapminder, 10)
+
+# 정렬
+gapminder[order(gapminder$year, gapminder$country),]
+
+# 변수 선택:
+gapminder[, c('pop', 'gdpPercap')]
+gapminder[, 1:3]
+
+# 변수 이름 바꾸기: gdpPercap 를 gdp_per_cap 으로 변경
+f2 = gapminder
+names(f2)
+names(f2)[6] = 'gdp_per_cap'
+
+# 변수변환과 변수 생성
+f2 = gapminder
+f2$total_gdp = f2$pop * f2$gdpPercap
+
+# 요약통계량 계산
+median(gapminder$gdpPercap)
+apply(gapminder[,4:6], 2, mean)
+summary(gapminder)
+
+# 테이터 탐색 tbl_df와 glimpse----------------------------
+library(dplyr)
+
+# tbl_df() 와 glimpse()
+i2 <- tbl_df(iris)
+class(i2)
+i2
+glimpse(i2)
+
+iris %>% head
+iris %>% head(10)
+
+
+
+
+filter(gapminder, country=='Korea, Rep.')
+filter(gapminder, year==2007)
+filter(gapminder, country=='Korea, Rep.' & year==2007)
+
+gapminder %>% filter(country=='Korea, Rep.')
+gapminder %>% filter(year==2007)
+gapminder %>% filter(country=='Korea, Rep.' & year==2007)
+
+
+arrange(gapminder, year, country)
+gapminder %>% arrange(year, country)
+
+
+
+select(gapminder, pop, gdpPercap)
+gapminder %>% select(pop, gdpPercap)
+
+
+
+gapminder %>%
+  mutate(total_gdp = pop * gdpPercap,
+         le_gdp_ratio = lifeExp / gdpPercap,
+         lgrk = le_gdp_ratio * 100)
+
+
+gapminder %>%
+  summarize(n_obs = n(),
+            n_countries = n_distinct(country),
+            n_years = n_distinct(year),
+            med_gdpc = median(gdpPercap),
+            max_gdppc = max(gdpPercap))
+
+
+sample_n(gapminder, 10)
+sample_frac(gapminder, 0.01)
+
+
+distinct(select(gapminder, country))
+distinct(select(gapminder, year))
+
+
+gapminder %>% select(country) %>% distinct()
+gapminder %>% select(year) %>% distinct()
+
+
+gapminder %>%
+  filter(year == 2007) %>%
+  group_by(continent) %>%
+  summarize(median(lifeExp))
+
+
+# 함수형 프로그래밍의 장점 예시
+d1 = filter(gapminder, year == 2007)
+d2 = group_by(d1, continent)
+d3 = summarize(d2, lifeExp = median(lifeExp))
+arrange(d3, -lifeExp)
+
+arrange(
+  summarize(
+    group_by(
+      filter(gapminder, year==2007), continent
+    ), lifeExp=median(lifeExp)
+  ), -lifeExp
+)
+
+
+gapminder %>%
+  filter(year == 2007) %>%
+  group_by(continent) %>%
+  summarize(lifeExp = median(lifeExp)) %>%
+  arrange(-lifeExp)
+
+
+# 조인 연산자;  inner, left, right, full(outer) join
+(df1 <- data_frame(x = c(1, 2), y = 2:1))
+(df2 <- data_frame(x = c(1, 3), a = 10, b = "a"))
+df1 %>% inner_join(df2)
+df1 %>% left_join(df2)
+df1 %>% right_join(df2)
+df1 %>% full_join(df2)
+
+
+# Data-visualization  -----------------------------------------------------
+
+library(tidyverse)
+library(gridExtra)
+library(gapminder)
+
+# install.packages("gapminder")
+help(package = "gapminder")
+library(gapminder)
+?gapminder
+gapminder
+
+head(gapminder)
+
+tail(gapminder)
+
+library(dplyr)
+glimpse(gapminder)
+
+
+gapminder$lifeExp
+gapminder$gdpPercap
+gapminder[, c('lifeExp', 'gdpPercap')]
+gapminder %>% select(gdpPercap, lifeExp)
+
+# 요약통계량과 상관관계
+summary(gapminder$lifeExp)
+summary(gapminder$gdpPercap)
+cor(gapminder$lifeExp, gapminder$gdpPercap)
+
+
+# 베이스 패키지 시각화
+#@ 4.1
+opar = par(mfrow=c(2,2))
+hist(gapminder$lifeExp)
+hist(gapminder$gdpPercap, nclass=50)
+# hist(sqrt(gapminder$gdpPercap), nclass=50)
+hist(log10(gapminder$gdpPercap), nclass=50)
+plot(log10(gapminder$gdpPercap), gapminder$lifeExp, cex=.5)
+par(opar)
+dev.off()
+
+
+cor(gapminder$lifeExp, log10(gapminder$gdpPercap))
+
+
+# 앤스콤의 사인방(Anscombe's quartet)
+# 수치는 정확하지만 그래프는 부적확하다란 믿음을 반박하고자 
+# x,y 두 수량형 변수에 대한 11개의 관측치로 이루어진 네 세트의 
+# 데이터를 예일대학교 교수인 앤스콤이 만들어냄 (anscombe 1973)
+
+# https://en.wikipedia.org/wiki/Anscombe%27s_quartet
+# https://commons.wikimedia.org/wiki/File:Anscombe%27s_quartet_3.svg
+
+svg("Anscombe's quartet 3.svg", width=11, height=8)
+
+summary(anscombe)
+
+
+# 미완성
+for (i in 1:8) {
+  A = anscombe %>% filter(anscombe[,i]>0) %>%  .[,i]
+  B = A %>% mean()
+  D = A %>% sd()
+  print(data.frame(names = colnames(anscombe)[i], 
+                   means =B[1],
+                   sdv = D[1]))
+}
+
+
+
+
+for( i in 1:12){
+  A = bpa_set %>% filter(bpa_set[,i]>0) %>% .[,i] 
+  B = A[A>boxplot(A)$stats[1]&A<boxplot(A)$stats[5]] %>% range()
+  print(data.frame(names=colnames(bpa_set)[i] ,lower=B[1],upper=B[2]))
+}
+
+
+
+library(gapminder)  
+anscombe %>%
+  summarize(n_obs = n(),
+            mean = mean(ff))
+
+          
+
+data(anscombe)
+attach(anscombe)
+summerize(mean(anscombe))
+plot(y1, x1, type = "p")
+plot(y2, x2, type = "p")
+plot(y3, x3, type = "p")
+plot(y4, x4, type = "p")
+
+op <- par(las=1, mfrow=c(2,2), mar=1.5+c(4,4,1,1), oma=c(0,0,0,0),
+          lab=c(6,6,7), cex.lab=2.0, cex.axis=1.3, mgp=c(3,1,0))
+ff <- y ~ x
+for(i in 1:4) {
+  ff[[2]] <- as.name(paste("y", i, sep=""))
+  ff[[3]] <- as.name(paste("x", i, sep=""))
+  lmi <- lm(ff, data= anscombe)
+  xl <- substitute(expression(x[i]), list(i=i))  
+  yl <- substitute(expression(y[i]), list(i=i))
+  plot(ff, data=anscombe, col="red", pch=21, cex=2.4, bg = "orange", 
+       xlim=c(3,19), ylim=c(3,13)
+       , xlab=eval(xl), ylab=yl  # for version 3
+  )  
+  abline(lmi, col="blue")
+}
+par(op)
+dev.off()
+
+# gapminder 예제의 시각화를 ggplot2로 해보자
+library(ggplot2)
+library(dplyr)
+gapminder %>% ggplot(aes(x=lifeExp)) + geom_histogram()
+gapminder %>% ggplot(aes(x=gdpPercap)) + geom_histogram()
+gapminder %>% ggplot(aes(x=gdpPercap)) + geom_histogram() +
+  scale_x_log10()
+gapminder %>% ggplot(aes(x=gdpPercap, y=lifeExp)) + geom_point() +
+  scale_x_log10() + geom_smooth()
+
+library(gridExtra)
+p1 <- gapminder %>% ggplot(aes(x=lifeExp)) + geom_histogram()
+p2 <- gapminder %>% ggplot(aes(x=gdpPercap)) + geom_histogram()
+p3 <- gapminder %>% ggplot(aes(x=gdpPercap)) + geom_histogram() +
+  scale_x_log10()
+p4 <- gapminder %>% ggplot(aes(x=gdpPercap, y=lifeExp)) + geom_point() +
+  scale_x_log10() + geom_smooth()
+g <- arrangeGrob(p1, p2, p3, p4, ncol=2)
+ggsave("../plots/4-3.png", g, width=5.5, height=4, units='in', dpi=600)
+
+
+
+
+
+library(ggplot2)
+?ggplot
+example(ggplot)
+
+df <- data.frame(gp = factor(rep(letters[1:3], each = 10)),
+                 y = rnorm(30))
+glimpse(df)
+
+ds <- df %>% group_by(gp) %>% summarize(mean = mean(y), sd = sd(y))
+ds
+
+
+ggplot(df, aes(x = gp, y = y)) +
+  geom_point() +
+  geom_point(data = ds, aes(y = mean),
+             colour = 'red', size = 3)
+
+
+ggplot(df) +
+  geom_point(aes(x = gp, y = y)) +
+  geom_point(data = ds, aes(x = gp, y = mean),
+             colour = 'red', size = 3)
+
+
+ggplot() +
+  geom_point(data = df, aes(x = gp, y = y)) +
+  geom_point(data = ds, aes(x = gp, y = mean),
+             colour = 'red', size = 3) +
+  geom_errorbar(data = ds, aes(x = gp,
+                               ymin = mean - sd, ymax = mean + sd),
+                colour = 'red', width = 0.4)
+
+
+ggplot(gapminder, aes(lifeExp)) + geom_histogram()
+gapminder %>% ggplot(aes(lifeExp)) + geom_histogram()
+
+
+?diamonds
+?mpg
+glimpse(diamonds)
+glimpse(mpg)
+
+
+# install.packages("randomcoloR")
+library(MASS)
+library(randomcoloR)
+
+C = matrix(c(1, 0.9, 0.9, 1), 2, 2)
+X = mvrnorm(100, c(0, 0), C)
+col = randomColor(100, "pink", "bright")
+
+par(mfrow=c(1,2))
+plot(X, xlab="x1", ylab="x2", col=col, pch=19, cex=2.5, main = "X")
+E = eigen(C)
+v1 = E$vectors[,1]
+v2 = E$vectors[,2]
+l1 = E$values[1]
+l2 = E$values[2]
+lines(c(0, v1[1])*100,c(0, v1[2])*100, col="green", lwd=4, lty=2)
+lines(c(0, -v1[1])*100,c(0, -v1[2])*100, col="green", lwd=4, lty=2)
+lines(c(0, v2[1])*100,c(0, v2[2])*100, col="green", lwd=4, lty=2)
+lines(c(0, -v2[1])*100,c(0, -v2[2])*100, col="green", lwd=4, lty=2)
+
+sum(v1 * v2)
+
+y1 = X %*% matrix(v1, 2)
+y2 = X %*% matrix(v2, 2)
+
+plot(y1, y2, xlab="y1", ylab="y2", col=col, pch=19, cex=2.5, main = "Y")
+
+
+
+# 1. 한 수량형 변수
+
+library(gapminder)
+library(ggplot2)
+library(dplyr)
+gapminder %>% ggplot(aes(x=gdpPercap)) + geom_histogram()
+gapminder %>% ggplot(aes(x=gdpPercap)) + geom_histogram() +
+  scale_x_log10()
+gapminder %>% ggplot(aes(x=gdpPercap)) + geom_freqpoly() +
+  scale_x_log10()
+gapminder %>% ggplot(aes(x=gdpPercap)) + geom_density() +
+  scale_x_log10()
+
+
+#@ 4.4
+p1 <- gapminder %>% ggplot(aes(x=gdpPercap)) + geom_histogram()
+p2 <- gapminder %>% ggplot(aes(x=gdpPercap)) + geom_histogram() +
+  scale_x_log10()
+p3 <- gapminder %>% ggplot(aes(x=gdpPercap)) + geom_freqpoly() +
+  scale_x_log10()
+p4 <- gapminder %>% ggplot(aes(x=gdpPercap)) + geom_density() +
+  scale_x_log10()
+g <- arrangeGrob(p1, p2, p3, p4, ncol=2)
+ggsave("../plots/4-4.png", g, width=6, height=4, units='in', dpi=600)
+
+summary(gapminder)
+
+
+# 2. 한 범주형 변수
+
+#@ 4.5
+diamonds %>% ggplot(aes(cut)) + geom_bar()
+ggsave("../plots/4-5.png", width=5.5, height=4, units='in', dpi=600)
+
+table(diamonds$cut)
+
+prop.table(table(diamonds$cut))
+
+round(prop.table(table(diamonds$cut))*100, 1)
+
+diamonds %>%
+  group_by(cut) %>%
+  tally() %>%
+  mutate(pct = round(n / sum(n) * 100, 1))
+
+
+# 3. 두 수량형 변수
+
+diamonds %>% ggplot(aes(carat, price)) + geom_point()
+diamonds %>% ggplot(aes(carat, price)) + geom_point(alpha=.01)
+mpg %>% ggplot(aes(cyl, hwy)) + geom_point()
+mpg %>% ggplot(aes(cyl, hwy)) + geom_jitter()
+
+
+set.seed(1704)
+p1 <- diamonds %>% ggplot(aes(carat, price)) + geom_point()
+p2 <- diamonds %>% ggplot(aes(carat, price)) + geom_point(alpha=.01)
+p3 <- mpg %>% ggplot(aes(cyl, hwy)) + geom_point()
+p4 <- mpg %>% ggplot(aes(cyl, hwy)) + geom_jitter()
+ggsave("../plots/4-6.png", arrangeGrob(p1, p2, p3, p4, ncol=2),
+       width=5.5, height=4, units='in', dpi=600)
+
+
+pairs(diamonds %>% sample_n(1000))
+
+png("../plots/4-7.png", 5.5*1.2, 4*1.2, units='in', pointsize=9, res=400)
+set.seed(1704)
+pairs(diamonds %>% sample_n(1000))
+dev.off()
+
+
+
+# 4. 수량형 변수와 범주형 변수
+
+mpg %>% ggplot(aes(class, hwy)) + geom_boxplot()
+ggsave("../plots/4-8.png", width=5.5, height=4, units='in', dpi=600)
+
+
+mpg %>% ggplot(aes(class, hwy)) + geom_jitter(col='gray') +
+  geom_boxplot(alpha=.5)
+
+mpg %>% mutate(class=reorder(class, hwy, median)) %>%
+  ggplot(aes(class, hwy)) + geom_jitter(col='gray') +
+  geom_boxplot(alpha=.5)
+
+mpg %>%
+  mutate(class=factor(class, levels=
+                        c("2seater", "subcompact", "compact", "midsize",
+                          "minivan", "suv", "pickup"))) %>%
+  ggplot(aes(class, hwy)) + geom_jitter(col='gray') +
+  geom_boxplot(alpha=.5)
+
+mpg %>%
+  mutate(class=factor(class, levels=
+                        c("2seater", "subcompact", "compact", "midsize",
+                          "minivan", "suv", "pickup"))) %>%
+  ggplot(aes(class, hwy)) + geom_jitter(col='gray') +
+  geom_boxplot(alpha=.5) + coord_flip()
+
+
+set.seed(1704)
+p1 <- mpg %>% ggplot(aes(class, hwy)) + geom_jitter(col='gray') +
+  geom_boxplot(alpha=.5)
+p2 <- mpg %>% mutate(class=reorder(class, hwy, median)) %>%
+  ggplot(aes(class, hwy)) + geom_jitter(col='gray') +
+  geom_boxplot(alpha=.5)
+p3 <- mpg %>%
+  mutate(class=factor(class, levels=
+                        c("2seater", "subcompact", "compact", "midsize",
+                          "minivan", "suv", "pickup"))) %>%
+  ggplot(aes(class, hwy)) + geom_jitter(col='gray') +
+  geom_boxplot(alpha=.5)
+p4 <- mpg %>%
+  mutate(class=factor(class, levels=
+                        c("2seater", "subcompact", "compact", "midsize",
+                          "minivan", "suv", "pickup"))) %>%
+  ggplot(aes(class, hwy)) + geom_jitter(col='gray') +
+  geom_boxplot(alpha=.5) + coord_flip()
+ggsave("../plots/4-9.png", arrangeGrob(p1, p2, p3, p4, ncol=2),
+       width=5.5*2, height=4*1.5, units='in', dpi=400)
+
+
+
+# 5. 두 범주형 변수
+
+glimpse(data.frame(Titanic))
+
+xtabs(Freq ~ Class + Sex + Age + Survived, data.frame(Titanic))
+
+
+?Titanic
+Titanic
+
+
+mosaicplot(Titanic, main = "Survival on the Titanic")
+
+mosaicplot(Titanic, main = "Survival on the Titanic", color=TRUE)
+
+png("../plots/4-10.png", 5.5, 4, units='in', pointsize=9, res=600)
+mosaicplot(Titanic, main = "Survival on the Titanic", color=TRUE)
+dev.off()
+
+# 아이들 사이에 생존률이 더 높을까?
+apply(Titanic, c(3, 4), sum)
+
+round(prop.table(apply(Titanic, c(3, 4), sum), margin = 1),3)
+
+# 남-녀 생존률의 비교
+apply(Titanic, c(2, 4), sum)
+
+round(prop.table(apply(Titanic, c(2, 4), sum), margin = 1),3)
+
+
+t2 = data.frame(Titanic)
+
+t2 %>% group_by(Sex) %>%
+  summarize(n = sum(Freq),
+            survivors=sum(ifelse(Survived=="Yes", Freq, 0))) %>%
+  mutate(rate_survival=survivors/n)
+
+
+# 6. 더 많은 변수를 보여주는 기술 (1): 각 geom 의 다른 속성들을 사용한다.
+
+gapminder %>% filter(year==2007) %>%
+  ggplot(aes(gdpPercap, lifeExp)) +
+  geom_point() + scale_x_log10() +
+  ggtitle("Gapminder data for 2007")
+
+
+gapminder %>% filter(year==2002) %>%
+  ggplot(aes(gdpPercap, lifeExp)) +
+  geom_point(aes(size=pop, col=continent)) + scale_x_log10() +
+  ggtitle("Gapminder data for 2007")
+
+p1 <- gapminder %>% filter(year==2007) %>%
+  ggplot(aes(gdpPercap, lifeExp)) +
+  geom_point() + scale_x_log10() +
+  ggtitle("Gapminder data for 2007")
+p2 <- gapminder %>% filter(year==2002) %>%
+  ggplot(aes(gdpPercap, lifeExp)) +
+  geom_point(aes(size=pop, col=continent)) + scale_x_log10() +
+  ggtitle("Gapminder data for 2007")
+ggsave("../plots/4-11.png", arrangeGrob(p1, p2, ncol=2),
+       width=5.5*1.7, height=4, units='in', dpi=600)
+
+# 7. 더 많은 변수를 보여주는 기술 (2). facet_* 함수를 사용한다.
+
+gapminder %>%
+  ggplot(aes(year, lifeExp, group=country)) +
+  geom_line()
+
+
+gapminder %>%
+  ggplot(aes(year, lifeExp, group=country, col=continent)) +
+  geom_line()
+
+
+gapminder %>%
+  ggplot(aes(year, lifeExp, group=country)) +
+  geom_line() +
+  facet_wrap(~ continent)
+
+p1 <- gapminder %>%
+  ggplot(aes(year, lifeExp, group=country)) +
+  geom_line()
+p2 <- gapminder %>%
+  ggplot(aes(year, lifeExp, group=country, col=continent)) +
+  geom_line()
+p3 <- gapminder %>%
+  ggplot(aes(year, lifeExp, group=country)) +
+  geom_line() +
+  facet_wrap(~ continent)
+ggsave("../plots/4-12.png", arrangeGrob(p1, p2, p3, ncol=2),
+       width=5.5*2, height=4*2, units='in', dpi=150)
+
+
+
+# ggplot2 _ Boxplot overap ------------------------------------------------
+rm(list=ls())
+library(ggplot2)
+iris$Q = ifelse(iris$Sepal.Width < 3.2, "A", "B")
+head(iris)
+ggplot(data=iris, aes(Species, Sepal.Length)) + 
+  geom_boxplot(aes(colour=Q), alpha = 0.1)
+library(plotly)
+ggplotly()
+
+
+
+head(iris)
+
+
+# Basic-analysis ----------------------------------------------------------
+
+library(tidyverse)
+library(gridExtra)
+
+mpg <- tbl_df(mpg)
+mpg
+
+# 7.2. 모든 자료에 행해야 할 분석
+library(dplyr)
+library(ggplot2)
+glimpse(mpg)
+
+head(mpg)
+
+summary(mpg)
+
+# 7.3. 수량형 변수의 분석
+summary(mpg$hwy)
+mean(mpg$hwy)
+median(mpg$hwy)
+range(mpg$hwy)
+quantile(mpg$hwy)
+
+
+png("../plots/7-1.png", 5.5*.8, 4, units='in', pointsize=9, res=600)
+opar <- par(mfrow=c(2,2))
+hist(mpg$hwy)
+boxplot(mpg$hwy)
+qqnorm(mpg$hwy)
+qqline(mpg$hwy)
+par(opar)
+dev.off()
+
+
+# 7.3.1. 일변량 t-검정
+hwy <- mpg$hwy
+n <- length(hwy)
+mu0 <- 22.9
+t.test(hwy, mu=mu0, alternative = "greater")
+
+
+t.test(hwy)
+
+# 7.3.2. 이상점과 로버스트 통계방법
+c(mean(hwy), sd(hwy))
+c(median(hwy), mad(hwy))
+
+
+# 7.4. 성공-실패값 범주형 변수의 분석
+set.seed(1606)
+n <- 100
+p <- 0.5
+x <- rbinom(n, 1, p)
+x <- factor(x, levels = c(0,1), labels = c("no", "yes"))
+x
+
+table(x)
+
+prop.table(table(x))
+
+barplot(table(x))
+
+binom.test(x=length(x[x=='yes']), n = length(x), p = 0.5, alternative = "two.sided")
+
+
+
+binom.test(x=5400, n = 10000)
+
+n <- c(100, 1000, 2000, 10000, 1e6)
+data.frame(n=n, moe=round(1.96 * sqrt(1/(4 * n)),4))
+curve(1.96 * sqrt(1/(4 * x)), 10, 10000, log='x')
+grid()
+
+png("../plots/7-2.png", 5.5, 4, units='in', pointsize=9, res=600)
+n <- c(100, 1000, 2000, 10000, 1e6)
+data.frame(n=n, moe=round(1.96 * sqrt(1/(4 * n)),4))
+curve(1.96 * sqrt(1/(4 * x)), 10, 10000, log='x')
+grid()
+dev.off()
+
+
+# 7.6. 수량형 X, 수량형 Y의 분석
+
+ggplot(mpg, aes(cty, hwy)) + geom_jitter() + geom_smooth(method="lm")
+ggsave("../plots/7-4.png", width=5.5, height=4, units='in', dpi=600)
+
+cor(mpg$cty, mpg$hwy)
+with(mpg, cor(cty, hwy))
+with(mpg, cor(cty, hwy, method = "kendall"))
+with(mpg, cor(cty, hwy, method = "spearman"))
+
+
+# 7.6.3. 선형회귀모형 적합
+
+(hwy_lm <- lm(hwy ~ cty, data=mpg))
+summary(hwy_lm)
+
+predict(hwy_lm)
+resid(hwy_lm)
+predict(hwy_lm, newdata = data.frame(cty=c(10, 20, 30)))
+
+opar <- par(mfrow = c(2,2), oma = c(0, 0, 1.1, 0))
+plot(hwy_lm, las = 1)   # Residuals, Fitted, ...
+par(opar)
+
+png("../plots/7-6.png", 5.5, 4*1.2, units='in', pointsize=9, res=600)
+opar <- par(mfrow = c(2,2), oma = c(0, 0, 1.1, 0))
+plot(hwy_lm, las = 1)   # Residuals, Fitted, ...
+par(opar)
+dev.off()
+
+# 7.6.6. 로버스트 선형 회귀분석
+
+library(MASS)
+set.seed(123) # make reproducible
+lqs(stack.loss ~ ., data = stackloss) # 로버스트
+lm(stack.loss ~ ., data = stackloss) # 보통 선형모형
+
+
+# 7.6.7. 비선형/비모수적 방법, 평활법과 LOESS
+
+plot(hwy ~ displ, data=mpg)
+mpg_lo <- loess(hwy ~ displ, data=mpg)
+mpg_lo
+summary(mpg_lo)
+xs <- seq(2,7,length.out = 100)
+mpg_pre <- predict(mpg_lo, newdata=data.frame(displ=xs), se=TRUE)
+lines(xs, mpg_pre$fit)
+lines(xs, mpg_pre$fit - 1.96*mpg_pre$se.fit, lty=2)
+lines(xs, mpg_pre$fit + 1.96*mpg_pre$se.fit, lty=2)
+
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point() +
+  geom_smooth()
+
+
+png("../plots/7-8-left.png", 5.5*.8, 4, units='in', pointsize=9, res=600)
+plot(hwy ~ displ, data=mpg)
+mpg_lo <- loess(hwy ~ displ, data=mpg)
+xs <- seq(2,7,length.out = 100)
+mpg_pre <- predict(mpg_lo, newdata=data.frame(displ=xs), se=TRUE)
+lines(xs, mpg_pre$fit)
+lines(xs, mpg_pre$fit - 1.96*mpg_pre$se.fit, lty=2)
+lines(xs, mpg_pre$fit + 1.96*mpg_pre$se.fit, lty=2)
+dev.off()
+
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point() +
+  geom_smooth()
+ggsave("../plots/7-8-right.png", width=5.5*.8, height=4, units='in', dpi=600)
+
+
+# 7.7. 범주형 x, 수량형 y
+
+mpg %>% ggplot(aes(class, hwy)) + geom_boxplot()
+ggsave("../plots/7-9.png", width=5.5, height=4, units='in', dpi=600)
+
+
+(hwy_lm2 <- lm(hwy ~ class, data=mpg))
+summary(hwy_lm2)
+
+
+predict(hwy_lm2, newdata=data.frame(class="pickup"))
+
+opar <- par(mfrow = c(2,2), oma = c(0, 0, 1.1, 0))
+plot(hwy_lm2, las = 1)    # Residuals, Fitted, ...
+par(opar)
+
+png("../plots/7-10.png", 5.5*.8, 4, units='in', pointsize=9, res=600)
+opar <- par(mfrow = c(2,2), oma = c(0, 0, 1.1, 0))
+plot(hwy_lm2, las = 1)    # Residuals, Fitted, ...
+par(opar)
+dev.off()
+
+
+# 7.8. 수량형 x, 범주형 y (성공-실패)
+
+library(gridExtra)
+p1 <- ggplot(data.frame(x=c(0, 1)), aes(x)) +
+  stat_function(fun=function(x) log(x/(1-x))) + ylab('logit(x)') +
+  ggtitle("Logit function")
+p2 <- ggplot(data.frame(y=c(-6, 6)), aes(y)) +
+  stat_function(fun=function(y) 1/(1+exp(-y))) + ylab('logistic(y)') +
+  ggtitle("Logistic function")
+g <- arrangeGrob(p1, p2, ncol=2)
+ggsave("../plots/7-11.png", g, width=5.5*1.5, height=4, units='in', dpi=600)
+
+
+chall <- read.csv('https://raw.githubusercontent.com/stedy/Machine-Learning-with-R-datasets/master/challenger.csv')
+chall <- tbl_df(chall)
+glimpse(chall)
+
+
+chall %>% ggplot(aes(temperature, distress_ct)) +
+  geom_point()
+
+chall %>% ggplot(aes(factor(distress_ct), temperature)) +
+  geom_boxplot()
+
+
+p1 <- chall %>% ggplot(aes(temperature, distress_ct)) +
+  geom_point()
+p2 <- chall %>% ggplot(aes(factor(distress_ct), temperature)) +
+  geom_boxplot()
+g <- arrangeGrob(p1, p2, ncol=2)
+ggsave("../plots/7-12.png", g, width=5.5*1.5, height=4, units='in', dpi=600)
+
+
+(chall_glm <-
+    glm(cbind(distress_ct, o_ring_ct - distress_ct) ~
+          temperature, data=chall, family='binomial'))
+
+summary(chall_glm)
+
+predict(chall_glm, data.frame(temperature=30))
+
+exp(3.45) / (exp(3.45) +1)
+predict(chall_glm, data.frame(temperature=30), type='response')
+
+
+logistic <- function(x){exp(x)/(exp(x)+1)}
+
+plot(c(20,85), c(0,1), type = "n", xlab = "temperature",
+     ylab = "prob")
+tp <- seq(20, 85, 1)
+chall_glm_pred <-
+  predict(chall_glm,
+          data.frame(temperature = tp),
+          se.fit = TRUE)
+lines(tp, logistic(chall_glm_pred$fit))
+lines(tp, logistic(chall_glm_pred$fit - 1.96 * chall_glm_pred$se.fit), lty=2)
+lines(tp, logistic(chall_glm_pred$fit + 1.96 * chall_glm_pred$se.fit), lty=2)
+abline(v=30, lty=2, col='blue')
+
+
+logistic <- function(x){exp(x)/(exp(x)+1)}
+
+png("../plots/7-13.png", 5.5*.8, 4, units='in', pointsize=9, res=600)
+plot(c(20,85), c(0,1), type = "n", xlab = "temperature", ylab = "prob")
+tp <- seq(20, 85, 1)
+chall_glm_pred <- predict(chall_glm, data.frame(temperature = tp), se.fit = TRUE)
+lines(tp, logistic(chall_glm_pred$fit))
+lines(tp, logistic(chall_glm_pred$fit - 1.96 * chall_glm_pred$se.fit), lty=2)
+lines(tp, logistic(chall_glm_pred$fit + 1.96 * chall_glm_pred$se.fit), lty=2)
+abline(v=30, lty=2, col='blue')
+dev.off()
+
+
+
+# 8. 빅데이터 분류분석 I: 기본개념과 로지스틱모형
+
+install.packages(c("dplyr", "ggplot2", "ISLR", "MASS", "glmnet",
+                   "randomForest", "gbm", "rpart", "boot"))
+
+library(tidyverse)
+library(gridExtra)
+library(ROCR)
+
+library(ISLR)
+library(MASS)
+library(glmnet)
+library(randomForest)
+library(gbm)
+library(rpart)
+library(boot)
+
+
+
+
+binomial_deviance <- function(y_obs, yhat){
+  epsilon = 0.0001
+  yhat = ifelse(yhat < epsilon, epsilon, yhat)
+  yhat = ifelse(yhat > 1-epsilon, 1-epsilon, yhat)
+  a = ifelse(y_obs==0, 0, y_obs * log(y_obs/yhat))
+  b = ifelse(y_obs==1, 0, (1-y_obs) * log((1-y_obs)/(1-yhat)))
+  return(2*sum(a + b))
+}
+
+
+
+
+# curl https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data > adult.data
+# curl  https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.names > adult.names
+
+adult <- read.csv("adult.data", header = FALSE, strip.white = TRUE)
+names(adult) <- c('age', 'workclass', 'fnlwgt', 'education',
+                  'education_num', 'marital_status', 'occupation',
+                  'relationship', 'race', 'sex',
+                  'capital_gain', 'capital_loss',
+                  'hours_per_week', 'native_country',
+                  'wage')
+
+
+glimpse(adult)
+
+summary(adult)
+
+levels(adult$wage)
+
+# 8.3.3. 범주형 설명변수에서 문제의 복잡도
+
+levels(adult$race)
+adult$race[1:5]
+levels(adult$sex)
+adult$sex[1:5]
+
+x <- model.matrix( ~ race + sex + age, adult)
+glimpse(x)
+colnames(x)
+
+
+x_orig <- adult %>% dplyr::select(sex, race, age)
+View(x_orig)
+
+x_mod <- model.matrix( ~ sex + race + age, adult)
+View(x_mod)
+
+
+x <- model.matrix( ~ . - wage, adult)
+dim(x)
+
+# 8.4. 훈련, 검증, 테스트셋의 구분
+
+set.seed(1601)
+n <- nrow(adult)
+idx <- 1:n
+training_idx <- sample(idx, n * .60)
+idx <- setdiff(idx, training_idx)
+validate_idx = sample(idx, n * .20)
+test_idx <- setdiff(idx, validate_idx)
+length(training_idx)
+length(validate_idx)
+length(test_idx)
+training <- adult[training_idx,]
+validation <- adult[validate_idx,]
+test <- adult[test_idx,]
+
+
+# 8.5. 시각화
+
+training %>%
+  ggplot(aes(age, fill=wage)) +
+  geom_density(alpha=.5)
+ggsave("../../plots/8-3.png", width=5.5, height=4, units='in', dpi=600)
+
+
+
+training %>%
+  filter(race %in% c('Black', 'White')) %>%
+  ggplot(aes(age, fill=wage)) +
+  geom_density(alpha=.5) +
+  ylim(0, 0.1) +
+  facet_grid(race ~ sex, scales = 'free_y')
+ggsave("../../plots/8-4.png", width=5.5, height=4, units='in', dpi=600)
+
+
+
+training %>%
+  ggplot(aes(`education_num`, fill=wage)) +
+  geom_bar()
+ggsave("../../plots/8-5.png", width=5.5, height=4, units='in', dpi=600)
+
+
+# 8.6. 로지스틱 회귀분석
+ad_glm_full <- glm(wage ~ ., data=training, family=binomial)
+
+summary(ad_glm_full)
+
+
+alias(ad_glm_full)
+
+
+predict(ad_glm_full, newdata = adult[1:5,], type="response")
+
+
+# 8.6.4. 예측 정확도 지표
+y_obs <- ifelse(validation$wage == ">50K", 1, 0)
+yhat_lm <- predict(ad_glm_full, newdata=validation, type='response')
+
+library(gridExtra)
+
+p1 <- ggplot(data.frame(y_obs, yhat_lm),
+             aes(y_obs, yhat_lm, group=y_obs,
+                 fill=factor(y_obs))) +
+  geom_boxplot()
+p2 <- ggplot(data.frame(y_obs, yhat_lm),
+             aes(yhat_lm, fill=factor(y_obs))) +
+  geom_density(alpha=.5)
+grid.arrange(p1, p2, ncol=2)
+
+g <- arrangeGrob(p1, p2, ncol=2)
+ggsave("../../plots/8-6.png", g, width=5.5*1.5, height=4, units='in', dpi=600)
+
+
+
+binomial_deviance(y_obs, yhat_lm)
+
+library(ROCR)
+pred_lm <- prediction(yhat_lm, y_obs)
+perf_lm <- performance(pred_lm, measure = "tpr", x.measure = "fpr")
+plot(perf_lm, col='black', main="ROC Curve for GLM")
+abline(0,1)
+performance(pred_lm, "auc")@y.values[[1]]
+
+
+png("../../plots/8-7.png", 5.5, 4, units='in', pointsize=9, res=600)
+pred_lm <- prediction(yhat_lm, y_obs)
+perf_lm <- performance(pred_lm, measure = "tpr", x.measure = "fpr")
+plot(perf_lm, col='black', main="ROC Curve for GLM")
+abline(0,1)
+dev.off()
+
+
+# 9. 빅데이터 분류분석 II: 라쏘와 랜덤포레스트
+
+# 9.1. glmnet 함수를 통한 라쏘 모형, 능형회귀, 변수선택
+xx <- model.matrix(wage ~ .-1, adult)
+x <- xx[training_idx, ]
+y <- ifelse(training$wage == ">50K", 1, 0)
+dim(x)
+
+ad_glmnet_fit <- glmnet(x, y)
+
+plot(ad_glmnet_fit)
+
+png("../../plots/9-1.png", 5.5, 4, units='in', pointsize=9, res=600)
+plot(ad_glmnet_fit)
+dev.off()
+
+ad_glmnet_fit
+
+coef(ad_glmnet_fit, s = c(.1713, .1295))
+
+
+
+ad_cvfit <- cv.glmnet(x, y, family = "binomial")
+
+plot(ad_cvfit)
+
+png("../../plots/9-2.png", 5.5, 4, units='in', pointsize=9, res=600)
+plot(ad_cvfit)
+dev.off()
+
+log(ad_cvfit$lambda.min)
+log(ad_cvfit$lambda.1se)
+
+coef(ad_cvfit, s=ad_cvfit$lambda.1se)
+coef(ad_cvfit, s="lambda.1se")
+
+length(which(coef(ad_cvfit, s="lambda.min")>0))
+length(which(coef(ad_cvfit, s="lambda.1se")>0))
+
+# 9.1.4.  값의 선택
+
+set.seed(1607)
+foldid <- sample(1:10, size=length(y), replace=TRUE)
+cv1 <- cv.glmnet(x, y, foldid=foldid, alpha=1, family='binomial')
+cv.5 <- cv.glmnet(x, y, foldid=foldid, alpha=.5, family='binomial')
+cv0 <- cv.glmnet(x, y, foldid=foldid, alpha=0, family='binomial')
+
+png("../../plots/9-3.png", 5.5, 4, units='in', pointsize=7, res=600)
+par(mfrow=c(2,2))
+plot(cv1, main="Alpha=1.0")
+plot(cv.5, main="Alpha=0.5")
+plot(cv0, main="Alpha=0.0")
+plot(log(cv1$lambda), cv1$cvm, pch=19, col="red",
+     xlab="log(Lambda)", ylab=cv1$name, main="alpha=1.0")
+points(log(cv.5$lambda), cv.5$cvm, pch=19, col="grey")
+points(log(cv0$lambda), cv0$cvm, pch=19, col="blue")
+legend("topleft", legend=c("alpha= 1", "alpha= .5", "alpha 0"),
+       pch=19, col=c("red","grey","blue"))
+dev.off()
+
+
+predict(ad_cvfit, s="lambda.1se", newx = x[1:5,], type='response')
+
+y_obs <- ifelse(validation$wage == ">50K", 1, 0)
+yhat_glmnet <- predict(ad_cvfit, s="lambda.1se", newx=xx[validate_idx,], type='response')
+yhat_glmnet <- yhat_glmnet[,1] # change to a vectro from [n*1] matrix
+binomial_deviance(y_obs, yhat_glmnet)
+# [1] 4257.118
+pred_glmnet <- prediction(yhat_glmnet, y_obs)
+perf_glmnet <- performance(pred_glmnet, measure="tpr", x.measure="fpr")
+
+performance(pred_glmnet, "auc")@y.values[[1]]
+
+png("../../plots/9-4.png", 5.5, 4, units='in', pointsize=9, res=600)
+plot(perf_lm, col='black', main="ROC Curve")
+plot(perf_glmnet, col='blue', add=TRUE)
+abline(0,1, col='gray')
+legend('bottomright', inset=.1,
+       legend=c("GLM", "glmnet"),
+       col=c('black', 'blue'), lty=1, lwd=2)
+dev.off()
+
+
+# 9.2. 나무모형
+library(rpart)
+cvr_tr <- rpart(wage ~ ., data = training)
+cvr_tr
+
+
+printcp(cvr_tr)
+summary(cvr_tr)
+
+
+
+png("../../plots/9-6.png", 5.5, 4, units='in', pointsize=9, res=600)
+opar <- par(mfrow = c(1,1), xpd = NA)
+plot(cvr_tr)
+text(cvr_tr, use.n = TRUE)
+par(opar)
+dev.off()
+
+
+yhat_tr <- predict(cvr_tr, validation)
+yhat_tr <- yhat_tr[,">50K"]
+binomial_deviance(y_obs, yhat_tr)
+pred_tr <- prediction(yhat_tr, y_obs)
+perf_tr <- performance(pred_tr, measure = "tpr", x.measure = "fpr")
+performance(pred_tr, "auc")@y.values[[1]]
+
+png("../../plots/9-7.png", 5.5, 4, units='in', pointsize=9, res=600)
+plot(perf_lm, col='black', main="ROC Curve")
+plot(perf_tr, col='blue', add=TRUE)
+abline(0,1, col='gray')
+legend('bottomright', inset=.1,
+       legend = c("GLM", "Tree"),
+       col=c('black', 'blue'), lty=1, lwd=2)
+dev.off()
+
+#Data Sample 
+
+sample( x, #표본을 뽑을 데이터
+        size, #표본의 크기
+        replace = FALSE, #복원 추출 여부
+        #데이터가 뽑힐 가중치
+        prob=NULL)
+
+sample(1:10, 5)
+sample(1:10, 5, replace=TRUE) #복원 추출 
+
+#test set, train set
+train = sample(1:10, 7)
+test = (1:10)[-train]
+train
+test
+
+iris[train,]
+iris[test,]
+
+# 다른 방법(caret 패키지 활용)
+set.seed(100)
+data = iris
+library(caret)
+ind = createDataPartition(data[,5], p=0.7, list=F)
+#ind <- createDataPartition(data$Species, p=0.7, list=F)
+train = data[ind,]
+test = data[-ind,]
+
+head(train)
+head(test)
+
+dim(train)
+dim(test)
+
+
+# 랜덤 포레스트 -----------------------------------------------------------------
+
+set.seed(1607)
+ad_rf <- randomForest(wage ~ ., training)
+ad_rf
+
+png("../../plots/9-8.png", 5.5, 4, units='in', pointsize=9, res=600)
+plot(ad_rf)
+dev.off()
+
+tmp <- importance(ad_rf)
+head(round(tmp[order(-tmp[,1]), 1, drop=FALSE], 2), n=10)
+
+png("../../plots/9-9.png", 5.5, 4, units='in', pointsize=9, res=600)
+varImpPlot(ad_rf)
+dev.off()
+
+predict(ad_rf, newdata = adult[1:5,])
+
+predict(ad_rf, newdata = adult[1:5,], type="prob")
+
+
+yhat_rf <- predict(ad_rf, newdata=validation, type='prob')[,'>50K']
+binomial_deviance(y_obs, yhat_rf)
+pred_rf <- prediction(yhat_rf, y_obs)
+perf_rf <- performance(pred_rf, measure="tpr", x.measure="fpr")
+performance(pred_tr, "auc")@y.values[[1]]
+
+png("../../plots/9-10.png", 5.5, 4, units='in', pointsize=9, res=600)
+plot(perf_lm, col='black', main="ROC Curve")
+plot(perf_glmnet, add=TRUE, col='blue')
+plot(perf_rf, add=TRUE, col='red')
+abline(0,1, col='gray')
+legend('bottomright', inset=.1,
+       legend = c("GLM", "glmnet", "RF"),
+       col=c('black', 'blue', 'red'), lty=1, lwd=2)
+dev.off()
+
+
+# 9.3.5. 예측확률값 자체의 비교
+p1 <- data.frame(yhat_glmnet, yhat_rf) %>%
+  ggplot(aes(yhat_glmnet, yhat_rf)) +
+  geom_point(alpha=.5) +
+  geom_abline() +
+  geom_smooth()
+p2 <- reshape2::melt(data.frame(yhat_glmnet, yhat_rf)) %>%
+  ggplot(aes(value, fill=variable)) +
+  geom_density(alpha=.5)
+grid.arrange(p1, p2, ncol=2)
+g <- arrangeGrob(p1, p2, ncol=2)
+ggsave("../../plots/9-11.png", g, width=5.5*1.2, height=4*.8, units='in', dpi=600)
+
+
+
+# 부스팅 ---------------------------------------------------------------------
+set.seed(1607)
+adult_gbm <- training %>% mutate(wage=ifelse(wage == ">50K", 1, 0))
+ad_gbm <- gbm(wage ~ ., data=adult_gbm,
+              distribution="bernoulli",
+              n.trees=50000, cv.folds=3, verbose=TRUE)
+(best_iter <- gbm.perf(ad_gbm, method="cv"))
+
+ad_gbm2 <- gbm.more(ad_gbm, n.new.trees=10000)
+(best_iter <- gbm.perf(ad_gbm2, method="cv"))
+
+
+png("../../plots/9-12.png", 5.5, 4, units='in', pointsize=9, res=600)
+(best_iter <- gbm.perf(ad_gbm2, method="cv"))
+dev.off()
+
+
+predict(ad_gbm, n.trees=best_iter, newdata=adult_gbm[1:5,], type='response')
+
+yhat_gbm <- predict(ad_gbm, n.trees=best_iter, newdata=validation, type='response')
+binomial_deviance(y_obs, yhat_gbm)
+pred_gbm <- prediction(yhat_gbm, y_obs)
+perf_gbm <- performance(pred_gbm, measure="tpr", x.measure="fpr")
+performance(pred_gbm, "auc")@y.values[[1]]
+
+
+png("../../plots/9-13.png", 5.5, 4, units='in', pointsize=9, res=600)
+plot(perf_lm, col='black', main="ROC Curve")
+plot(perf_glmnet, add=TRUE, col='blue')
+plot(perf_rf, add=TRUE, col='red')
+plot(perf_gbm, add=TRUE, col='cyan')
+abline(0,1, col='gray')
+legend('bottomright', inset=.1,
+       legend=c("GLM", "glmnet", "RF", "GBM"),
+       col=c('black', 'blue', 'red', 'cyan'), lty=1, lwd=2)
+dev.off()
+
+
+
+# 모형 비교, 최종 모형 선택, 일반화 성능 평가 ----------------------------------------------
+
+# 모형의 예측확률값의 분포 비교
+# exmaple(pairs) 에서 따옴
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...){
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  r <- abs(cor(x, y))
+  txt <- format(c(r, 0.123456789), digits = digits)[1]
+  txt <- paste0(prefix, txt)
+  if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+  text(0.5, 0.5, txt, cex = cex.cor * r)
+}
+
+png("../../plots/9-14.png", 5.5, 4, units='in', pointsize=9, res=600)
+pairs(data.frame(y_obs=y_obs,
+                 yhat_lm=yhat_lm,
+                 yhat_glmnet=c(yhat_glmnet),
+                 yhat_rf=yhat_rf,
+                 yhat_gbm=yhat_gbm),
+      lower.panel=function(x,y){ points(x,y); abline(0, 1, col='red')},
+      upper.panel = panel.cor)
+dev.off()
+
+
+# 테스트셋을 이용한 일반화능력 계산
+y_obs_test <- ifelse(test$wage == ">50K", 1, 0)
+yhat_gbm_test <- predict(ad_gbm, n.trees=best_iter, newdata=test, type='response')
+binomial_deviance(y_obs_test, yhat_gbm_test)
+pred_gbm_test <- prediction(yhat_gbm_test, y_obs_test)
+performance(pred_gbm_test, "auc")@y.values[[1]]
+
+
+# 캐럿 (caret) 패키지
+install.packages("caret", dependencies = c("Depends", "Suggests"))
+
+
+
+# This is for the earlier ROC curve example. ---
+{
+  png("../../plots/8-1.png", 5.5*1.2, 4*.8, units='in', pointsize=9, res=600)
+  opar <- par(mfrow=c(1,2))
+  plot(perf_lm, col='black', main="ROC Curve")
+  plot(perf_tr, col='blue', add=TRUE)
+  abline(0,1, col='gray')
+  legend('bottomright', inset=.1,
+         legend = c("GLM", "Tree"),
+         col=c('black', 'blue'), lty=1, lwd=2)
+  plot(perf_lm, col='black', main="ROC Curve")
+  plot(perf_glmnet, add=TRUE, col='blue')
+  plot(perf_rf, add=TRUE, col='red')
+  plot(perf_gbm, add=TRUE, col='cyan')
+  abline(0,1, col='gray')
+  legend('bottomright', inset=.1,
+         legend=c("GLM", "glmnet", "RF", "GBM"),
+         col=c('black', 'blue', 'red', 'cyan'), lty=1, lwd=2)
+  par(opar)
+  dev.off()
+}
+
+
+
+# 빅데이터 회귀분석. 와인 품질 예측 ---------
+
+# 회귀분석
+if (!file.exists("winequality-white.csv")){
+  system('curl http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv > winequality-red.csv')
+  system('curl http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv > winequality-white.csv')
+  system('curl http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality.names > winequality.names')
+}
+
+rmse <- function(yi, yhat_i){
+  sqrt(mean((yi - yhat_i)^2))
+}
+
+mae <- function(yi, yhat_i){
+  mean(abs(yi - yhat_i))
+}
+
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...){
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  r <- abs(cor(x, y))
+  txt <- format(c(r, 0.123456789), digits = digits)[1]
+  txt <- paste0(prefix, txt)
+  if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+  text(0.5, 0.5, txt, cex = cex.cor * r)
+}
+
+
+
+library(dplyr)
+library(ggplot2)
+library(MASS)
+library(glmnet)
+library(randomForest)
+library(gbm)
+library(rpart)
+library(boot)
+library(data.table)
+library(ROCR)
+library(gridExtra)
+
+data <- tbl_df(read.table("winequality-white.csv", strip.white = TRUE,
+                          sep=";", header = TRUE))
+glimpse(data)
+
+summary(data)
+
+pairs(data %>% sample_n(min(1000, nrow(data))))
+
+png("../../plots/14-1.png", 5.5*1.2, 4*1.2, units='in', pointsize=10, res=600)
+set.seed(1704)
+pairs(data %>% sample_n(min(1000, nrow(data))),
+      lower.panel=function(x,y){ points(x,y); abline(0, 1, col='red')},
+      upper.panel = panel.cor)
+dev.off()
+
+
+library(ggplot2)
+library(dplyr)
+library(gridExtra)
+p1 <- data %>% ggplot(aes(quality)) + geom_bar()
+p2 <- data %>% ggplot(aes(factor(quality), alcohol)) + geom_boxplot()
+p3 <- data %>% ggplot(aes(factor(quality), density)) + geom_boxplot()
+p4 <- data %>% ggplot(aes(alcohol, density)) + geom_point(alpha=.1) + geom_smooth()
+grid.arrange(p1, p2, p3, p4, ncol=2)
+g <- arrangeGrob(p1, p2, p3, p4, ncol=2)
+ggsave("../../plots/14-2.png", g, width=5.5, height=4, units='in', dpi=600)
+
+
+# 트래인셋과 테스트셋의 구분
+set.seed(1606)
+n <- nrow(data)
+idx <- 1:n
+training_idx <- sample(idx, n * .60)
+idx <- setdiff(idx, training_idx)
+validate_idx <- sample(idx, n * .20)
+test_idx <- setdiff(idx, validate_idx)
+training <- data[training_idx,]
+validation <- data[validate_idx,]
+test <- data[test_idx,]
+
+
+# 선형회귀모형 (linear regression model)
+data_lm_full <- lm(quality ~ ., data=training)
+summary(data_lm_full)
+
+predict(data_lm_full, newdata = data[1:5,])
+
+# 선형회귀모형에서 변수선택
+data_lm_full_2 <- lm(quality ~ .^2, data=training)
+summary(data_lm_full_2)
+
+length(coef(data_lm_full_2))
+
+library(MASS)
+data_step <- stepAIC(data_lm_full,
+                     scope = list(upper = ~ .^2, lower = ~1))
+
+data_step
+anova(data_step)
+summary(data_step)
+length(coef(data_step))
+
+
+
+# 모형평가
+y_obs <- validation$quality
+yhat_lm <- predict(data_lm_full, newdata=validation)
+yhat_lm_2 <- predict(data_lm_full_2, newdata=validation)
+yhat_step <- predict(data_step, newdata=validation)
+rmse(y_obs, yhat_lm)
+rmse(y_obs, yhat_lm_2)
+rmse(y_obs, yhat_step)
+
+
+# 라쏘 모형 적합
+xx <- model.matrix(quality ~ .^2-1, data)
+# xx <- model.matrix(quality ~ .-1, data)
+x <- xx[training_idx, ]
+y <- training$quality
+glimpse(x)
+
+data_cvfit <- cv.glmnet(x, y)
+
+png("../../plots/14-3.png", 5.5, 4, units='in', pointsize=10, res=600)
+plot(data_cvfit)
+dev.off()
+
+
+coef(data_cvfit, s = c("lambda.1se"))
+coef(data_cvfit, s = c("lambda.min"))
+
+(tmp <- coef(data_cvfit, s = c("lambda.1se")))
+length(tmp[abs(tmp)>0])
+(tmp <- coef(data_cvfit, s = c("lambda.min")))
+length(tmp[abs(tmp)>0])
+
+predict.cv.glmnet(data_cvfit, s="lambda.min", newx = x[1:5,])
+
+y_obs <- validation$quality
+yhat_glmnet <- predict(data_cvfit, s="lambda.min", newx=xx[validate_idx,])
+yhat_glmnet <- yhat_glmnet[,1] # change to a vector from [n*1] matrix
+rmse(y_obs, yhat_glmnet)
+
+# 나무모형
+data_tr <- rpart(quality ~ ., data = training)
+data_tr
+
+printcp(data_tr)
+summary(data_tr)
+
+png("../../plots/14-4.png", 5.5, 4, units='in', pointsize=10, res=600)
+opar <- par(mfrow = c(1,1), xpd = NA)
+plot(data_tr)
+text(data_tr, use.n = TRUE)
+par(opar)
+dev.off()
+
+yhat_tr <- predict(data_tr, validation)
+rmse(y_obs, yhat_tr)
+
+
+# 랜덤포레스트
+set.seed(1607)
+data_rf <- randomForest(quality ~ ., training)
+data_rf
+
+png("../../plots/14-5.png", 5.5*1.5, 4, units='in', pointsize=9, res=600)
+opar <- par(mfrow=c(1,2))
+plot(data_rf)
+varImpPlot(data_rf)
+par(opar)
+dev.off()
+
+yhat_rf <- predict(data_rf, newdata=validation)
+rmse(y_obs, yhat_rf)
+
+
+# 부스팅
+set.seed(1607)
+data_gbm <- gbm(quality ~ ., data=training,
+                n.trees=40000, cv.folds=3, verbose = TRUE)
+
+png("../../plots/14-6.png", 5.5, 4, units='in', pointsize=9, res=600)
+(best_iter = gbm.perf(data_gbm, method="cv"))
+dev.off()
+
+yhat_gbm <- predict(data_gbm, n.trees=best_iter, newdata=validation)
+rmse(y_obs, yhat_gbm)
+
+
+# 최종 모형선택과  테스트셋 오차계산
+data.frame(lm = rmse(y_obs, yhat_step),
+           glmnet = rmse(y_obs, yhat_glmnet),
+           rf = rmse(y_obs, yhat_rf),
+           gbm = rmse(y_obs, yhat_gbm)) %>%
+  reshape2::melt(value.name = 'rmse', variable.name = 'method')
+
+rmse(test$quality, predict(data_rf, newdata = test))
+
+
+# 회귀분석의 오차의 시각화
+boxplot(list(lm = y_obs-yhat_step,
+             glmnet = y_obs-yhat_glmnet,
+             rf = y_obs-yhat_rf,
+             gbm = y_obs-yhat_gbm), ylab="Error in Validation Set")
+abline(h=0, lty=2, col='blue')
+
+
+png("../../plots/14-7.png", 5.5, 4, units='in', pointsize=9, res=600)
+pairs(data.frame(y_obs=y_obs,
+                 yhat_lm=yhat_step,
+                 yhat_glmnet=c(yhat_glmnet),
+                 yhat_rf=yhat_rf,
+                 yhat_gbm=yhat_gbm),
+      lower.panel=function(x,y){ points(x,y); abline(0, 1, col='red')},
+      upper.panel = panel.cor)
+dev.off()
+
+
+# 빅데이터 분류분석 기본개념과 로지스틱 ----------------------------------------------------
+
+# 8. 빅데이터 분류분석 I: 기본개념과 로지스틱모형
+
+install.packages(c("dplyr", "ggplot2", "ISLR", "MASS", "glmnet",
+                   "randomForest", "gbm", "rpart", "boot"))
+
+library(tidyverse)
+library(gridExtra)
+library(ROCR)
+
+library(ISLR)
+library(MASS)
+library(glmnet)
+library(randomForest)
+library(gbm)
+library(rpart)
+library(boot)
+
+
+
+
+binomial_deviance <- function(y_obs, yhat){
+  epsilon = 0.0001
+  yhat = ifelse(yhat < epsilon, epsilon, yhat)
+  yhat = ifelse(yhat > 1-epsilon, 1-epsilon, yhat)
+  a = ifelse(y_obs==0, 0, y_obs * log(y_obs/yhat))
+  b = ifelse(y_obs==1, 0, (1-y_obs) * log((1-y_obs)/(1-yhat)))
+  return(2*sum(a + b))
+}
+
+
+
+
+# curl https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data > adult.data
+# curl  https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.names > adult.names
+
+adult <- read.csv("adult.data", header = FALSE, strip.white = TRUE)
+names(adult) <- c('age', 'workclass', 'fnlwgt', 'education',
+                  'education_num', 'marital_status', 'occupation',
+                  'relationship', 'race', 'sex',
+                  'capital_gain', 'capital_loss',
+                  'hours_per_week', 'native_country',
+                  'wage')
+
+
+glimpse(adult)
+
+summary(adult)
+
+levels(adult$wage)
+
+# 8.3.3. 범주형 설명변수에서 문제의 복잡도
+
+levels(adult$race)
+adult$race[1:5]
+levels(adult$sex)
+adult$sex[1:5]
+
+x <- model.matrix( ~ race + sex + age, adult)
+glimpse(x)
+colnames(x)
+
+
+x_orig <- adult %>% dplyr::select(sex, race, age)
+View(x_orig)
+
+x_mod <- model.matrix( ~ sex + race + age, adult)
+View(x_mod)
+
+
+x <- model.matrix( ~ . - wage, adult)
+dim(x)
+
+# 8.4. 훈련, 검증, 테스트셋의 구분
+
+set.seed(1601)
+n <- nrow(adult)
+idx <- 1:n
+training_idx <- sample(idx, n * .60)
+idx <- setdiff(idx, training_idx)
+validate_idx = sample(idx, n * .20)
+test_idx <- setdiff(idx, validate_idx)
+length(training_idx)
+length(validate_idx)
+length(test_idx)
+training <- adult[training_idx,]
+validation <- adult[validate_idx,]
+test <- adult[test_idx,]
+
+
+# 8.5. 시각화
+
+training %>%
+  ggplot(aes(age, fill=wage)) +
+  geom_density(alpha=.5)
+ggsave("../../plots/8-3.png", width=5.5, height=4, units='in', dpi=600)
+
+
+
+training %>%
+  filter(race %in% c('Black', 'White')) %>%
+  ggplot(aes(age, fill=wage)) +
+  geom_density(alpha=.5) +
+  ylim(0, 0.1) +
+  facet_grid(race ~ sex, scales = 'free_y')
+ggsave("../../plots/8-4.png", width=5.5, height=4, units='in', dpi=600)
+
+
+
+training %>%
+  ggplot(aes(`education_num`, fill=wage)) +
+  geom_bar()
+ggsave("../../plots/8-5.png", width=5.5, height=4, units='in', dpi=600)
+
+
+# 8.6. 로지스틱 회귀분석
+ad_glm_full <- glm(wage ~ ., data=training, family=binomial)
+
+summary(ad_glm_full)
+
+
+alias(ad_glm_full)
+
+
+predict(ad_glm_full, newdata = adult[1:5,], type="response")
+
+
+# 8.6.4. 예측 정확도 지표
+y_obs <- ifelse(validation$wage == ">50K", 1, 0)
+yhat_lm <- predict(ad_glm_full, newdata=validation, type='response')
+
+library(gridExtra)
+
+p1 <- ggplot(data.frame(y_obs, yhat_lm),
+             aes(y_obs, yhat_lm, group=y_obs,
+                 fill=factor(y_obs))) +
+  geom_boxplot()
+p2 <- ggplot(data.frame(y_obs, yhat_lm),
+             aes(yhat_lm, fill=factor(y_obs))) +
+  geom_density(alpha=.5)
+grid.arrange(p1, p2, ncol=2)
+
+g <- arrangeGrob(p1, p2, ncol=2)
+ggsave("../../plots/8-6.png", g, width=5.5*1.5, height=4, units='in', dpi=600)
+
+
+
+binomial_deviance(y_obs, yhat_lm)
+
+library(ROCR)
+pred_lm <- prediction(yhat_lm, y_obs)
+perf_lm <- performance(pred_lm, measure = "tpr", x.measure = "fpr")
+plot(perf_lm, col='black', main="ROC Curve for GLM")
+abline(0,1)
+performance(pred_lm, "auc")@y.values[[1]]
+
+
+png("../../plots/8-7.png", 5.5, 4, units='in', pointsize=9, res=600)
+pred_lm <- prediction(yhat_lm, y_obs)
+perf_lm <- performance(pred_lm, measure = "tpr", x.measure = "fpr")
+plot(perf_lm, col='black', main="ROC Curve for GLM")
+abline(0,1)
+dev.off()
+
+
+# 9. 빅데이터 분류분석 II: 라쏘와 랜덤포레스트
+
+# 9.1. glmnet 함수를 통한 라쏘 모형, 능형회귀, 변수선택
+xx <- model.matrix(wage ~ .-1, adult)
+x <- xx[training_idx, ]
+y <- ifelse(training$wage == ">50K", 1, 0)
+dim(x)
+
+ad_glmnet_fit <- glmnet(x, y)
+
+plot(ad_glmnet_fit)
+
+png("../../plots/9-1.png", 5.5, 4, units='in', pointsize=9, res=600)
+plot(ad_glmnet_fit)
+dev.off()
+
+ad_glmnet_fit
+
+coef(ad_glmnet_fit, s = c(.1713, .1295))
+
+
+
+ad_cvfit <- cv.glmnet(x, y, family = "binomial")
+
+plot(ad_cvfit)
+
+png("../../plots/9-2.png", 5.5, 4, units='in', pointsize=9, res=600)
+plot(ad_cvfit)
+dev.off()
+
+log(ad_cvfit$lambda.min)
+log(ad_cvfit$lambda.1se)
+
+coef(ad_cvfit, s=ad_cvfit$lambda.1se)
+coef(ad_cvfit, s="lambda.1se")
+
+length(which(coef(ad_cvfit, s="lambda.min")>0))
+length(which(coef(ad_cvfit, s="lambda.1se")>0))
+
+# 9.1.4.  값의 선택
+
+set.seed(1607)
+foldid <- sample(1:10, size=length(y), replace=TRUE)
+cv1 <- cv.glmnet(x, y, foldid=foldid, alpha=1, family='binomial')
+cv.5 <- cv.glmnet(x, y, foldid=foldid, alpha=.5, family='binomial')
+cv0 <- cv.glmnet(x, y, foldid=foldid, alpha=0, family='binomial')
+
+png("../../plots/9-3.png", 5.5, 4, units='in', pointsize=7, res=600)
+par(mfrow=c(2,2))
+plot(cv1, main="Alpha=1.0")
+plot(cv.5, main="Alpha=0.5")
+plot(cv0, main="Alpha=0.0")
+plot(log(cv1$lambda), cv1$cvm, pch=19, col="red",
+     xlab="log(Lambda)", ylab=cv1$name, main="alpha=1.0")
+points(log(cv.5$lambda), cv.5$cvm, pch=19, col="grey")
+points(log(cv0$lambda), cv0$cvm, pch=19, col="blue")
+legend("topleft", legend=c("alpha= 1", "alpha= .5", "alpha 0"),
+       pch=19, col=c("red","grey","blue"))
+dev.off()
+
+
+predict(ad_cvfit, s="lambda.1se", newx = x[1:5,], type='response')
+
+y_obs <- ifelse(validation$wage == ">50K", 1, 0)
+yhat_glmnet <- predict(ad_cvfit, s="lambda.1se", newx=xx[validate_idx,], type='response')
+yhat_glmnet <- yhat_glmnet[,1] # change to a vectro from [n*1] matrix
+binomial_deviance(y_obs, yhat_glmnet)
+# [1] 4257.118
+pred_glmnet <- prediction(yhat_glmnet, y_obs)
+perf_glmnet <- performance(pred_glmnet, measure="tpr", x.measure="fpr")
+
+performance(pred_glmnet, "auc")@y.values[[1]]
+
+png("../../plots/9-4.png", 5.5, 4, units='in', pointsize=9, res=600)
+plot(perf_lm, col='black', main="ROC Curve")
+plot(perf_glmnet, col='blue', add=TRUE)
+abline(0,1, col='gray')
+legend('bottomright', inset=.1,
+       legend=c("GLM", "glmnet"),
+       col=c('black', 'blue'), lty=1, lwd=2)
+dev.off()
+
+
+# 9.2. 나무모형
+library(rpart)
+cvr_tr <- rpart(wage ~ ., data = training)
+cvr_tr
+
+
+printcp(cvr_tr)
+summary(cvr_tr)
+
+
+
+png("../../plots/9-6.png", 5.5, 4, units='in', pointsize=9, res=600)
+opar <- par(mfrow = c(1,1), xpd = NA)
+plot(cvr_tr)
+text(cvr_tr, use.n = TRUE)
+par(opar)
+dev.off()
+
+
+yhat_tr <- predict(cvr_tr, validation)
+yhat_tr <- yhat_tr[,">50K"]
+binomial_deviance(y_obs, yhat_tr)
+pred_tr <- prediction(yhat_tr, y_obs)
+perf_tr <- performance(pred_tr, measure = "tpr", x.measure = "fpr")
+performance(pred_tr, "auc")@y.values[[1]]
+
+png("../../plots/9-7.png", 5.5, 4, units='in', pointsize=9, res=600)
+plot(perf_lm, col='black', main="ROC Curve")
+plot(perf_tr, col='blue', add=TRUE)
+abline(0,1, col='gray')
+legend('bottomright', inset=.1,
+       legend = c("GLM", "Tree"),
+       col=c('black', 'blue'), lty=1, lwd=2)
+dev.off()
+
+
+# 랜덤 포레스트 -----------
+
+set.seed(1607)
+ad_rf <- randomForest(wage ~ ., training)
+ad_rf
+
+png("../../plots/9-8.png", 5.5, 4, units='in', pointsize=9, res=600)
+plot(ad_rf)
+dev.off()
+
+tmp <- importance(ad_rf)
+head(round(tmp[order(-tmp[,1]), 1, drop=FALSE], 2), n=10)
+
+png("../../plots/9-9.png", 5.5, 4, units='in', pointsize=9, res=600)
+varImpPlot(ad_rf)
+dev.off()
+
+predict(ad_rf, newdata = adult[1:5,])
+
+predict(ad_rf, newdata = adult[1:5,], type="prob")
+
+
+yhat_rf <- predict(ad_rf, newdata=validation, type='prob')[,'>50K']
+binomial_deviance(y_obs, yhat_rf)
+pred_rf <- prediction(yhat_rf, y_obs)
+perf_rf <- performance(pred_rf, measure="tpr", x.measure="fpr")
+performance(pred_tr, "auc")@y.values[[1]]
+
+png("../../plots/9-10.png", 5.5, 4, units='in', pointsize=9, res=600)
+plot(perf_lm, col='black', main="ROC Curve")
+plot(perf_glmnet, add=TRUE, col='blue')
+plot(perf_rf, add=TRUE, col='red')
+abline(0,1, col='gray')
+legend('bottomright', inset=.1,
+       legend = c("GLM", "glmnet", "RF"),
+       col=c('black', 'blue', 'red'), lty=1, lwd=2)
+dev.off()
+
+
+
+# Andy Liaw의 메뉴얼 예제
+
+data(iris)
+iris.rf <- randomForest(iris[,-5], iris[,5], prox=TRUE)
+iris.p <- classCenter(iris[,-5], iris[,5], iris.rf$prox)
+plot(iris[,3], iris[,4], pch=21, xlab=names(iris)[3], ylab=names(iris)[4],
+     bg=c("red", "blue", "green")[as.numeric(factor(iris$Species))],
+     main="Iris Data with Prototypes")
+points(iris.p[,3], iris.p[,4], pch=21, cex=2, bg=c("red", "blue", "green"))
+
+
+rf1 <- randomForest(Species ~ ., iris, ntree=50, norm.votes=FALSE)
+rf2 <- randomForest(Species ~ ., iris, ntree=50, norm.votes=FALSE)
+rf3 <- randomForest(Species ~ ., iris, ntree=50, norm.votes=FALSE)
+rf.all <- combine(rf1, rf2, rf3)
+print(rf.all)
+
+
+getTree(randomForest(iris[,-5], iris[,5], ntree=10), 3, labelVar=TRUE)
+
+iris.rf <- randomForest(Species ~ ., iris, ntree=50, norm.votes=FALSE)
+iris.rf <- grow(iris.rf, 50)
+print(iris.rf)
+
+
+set.seed(4543)
+data(mtcars)
+mtcars.rf <- randomForest(mpg ~ ., data=mtcars, ntree=1000,
+                          keep.forest=FALSE, importance=TRUE)
+importance(mtcars.rf)
+importance(mtcars.rf, type=1)
+
+data(imports85)
+imp85 <- imports85[,-2] # Too many NAs in normalizedLosses.
+imp85 <- imp85[complete.cases(imp85), ]
+## Drop empty levels for factors.
+imp85[] <- lapply(imp85, function(x) if (is.factor(x)) x[, drop=TRUE] else x)
+stopifnot(require(randomForest))
+price.rf <- randomForest(price ~ ., imp85, do.trace=10, ntree=100)
+print(price.rf)
+numDoors.rf <- randomForest(numOfDoors ~ ., imp85, do.trace=10, ntree=100)
+print(numDoors.rf)
+
+
+set.seed(1)
+data(iris)
+iris.rf <- randomForest(Species ~ ., iris, keep.forest=FALSE)
+plot(margin(iris.rf))
+
+
+set.seed(1)
+data(iris)
+iris.rf <- randomForest(Species ~ ., iris, proximity=TRUE,
+                        keep.forest=FALSE)
+MDSplot(iris.rf, iris$Species)
+## Using different symbols for the classes:
+MDSplot(iris.rf, iris$Species, palette=rep(1, 3), pch=as.numeric(iris$Species))
+
+data(iris)
+iris.na <- iris
+set.seed(111)
+## artificially drop some data values.
+for (i in 1:4) iris.na[sample(150, sample(20)), i] <- NA
+iris.roughfix <- na.roughfix(iris.na)
+iris.narf <- randomForest(Species ~ ., iris.na, na.action=na.roughfix)
+print(iris.narf)
+
+set.seed(1)
+iris.rf <- randomForest(iris[,-5], iris[,5], proximity=TRUE)
+plot(outlier(iris.rf), type="h",
+     col=c("red", "green", "blue")[as.numeric(iris$Species)])
+
+
+set.seed(543)
+iris.rf <- randomForest(Species~., iris)
+partialPlot(iris.rf, iris, Petal.Width, "versicolor")
+## Looping over variables ranked by importance:
+data(airquality)
+airquality <- na.omit(airquality)
+set.seed(131)
+ozone.rf <- randomForest(Ozone ~ ., airquality, importance=TRUE)
+imp <- importance(ozone.rf)
+impvar <- rownames(imp)[order(imp[, 1], decreasing=TRUE)]
+op <- par(mfrow=c(2, 3))
+for (i in seq_along(impvar)) {
+  partialPlot(ozone.rf, airquality, impvar[i], xlab=impvar[i],
+              main=paste("Partial Dependence on", impvar[i]),
+              ylim=c(30, 70))
+}
+par(op)
+
+
+data(mtcars)
+plot(randomForest(mpg ~ ., mtcars, keep.forest=FALSE, ntree=100), log="y")
+set.seed(111)
+ind <- sample(2, nrow(iris), replace = TRUE, prob=c(0.8, 0.2))
+iris.rf <- randomForest(Species ~ ., data=iris[ind == 1,])
+iris.pred <- predict(iris.rf, iris[ind == 2,])
+table(observed = iris[ind==2, "Species"], predicted = iris.pred)
+## Get prediction for all trees.
+predict(iris.rf, iris[ind == 2,], predict.all=TRUE)
+## Proximities.
+predict(iris.rf, iris[ind == 2,], proximity=TRUE)
+## Nodes matrix.
+str(attr(predict(iris.rf, iris[ind == 2,], nodes=TRUE), "nodes"))
+
+
+set.seed(71)
+iris.rf <- randomForest(Species ~ ., data=iris, importance=TRUE,
+                        proximity=TRUE)
+print(iris.rf)
+## Look at variable importance:
+round(importance(iris.rf), 2)
+## Do MDS on 1 - proximity:
+iris.mds <- cmdscale(1 - iris.rf$proximity, eig=TRUE)
+op <- par(pty="s")
+pairs(cbind(iris[,1:4], iris.mds$points), cex=0.6, gap=0,
+      col=c("red", "green", "blue")[as.numeric(iris$Species)],
+      main="Iris Data: Predictors and MDS of Proximity Based on RandomForest")
+par(op)
+print(iris.mds$GOF)
+
+## The `unsupervised' case:
+set.seed(17)
+iris.urf <- randomForest(iris[, -5])
+MDSplot(iris.urf, iris$Species)
+## stratified sampling: draw 20, 30, and 20 of the species to grow each tree.
+(iris.rf2 <- randomForest(iris[1:4], iris$Species,
+                          sampsize=c(20, 30, 20)))
+## Regression:
+## data(airquality)
+set.seed(131)
+ozone.rf <- randomForest(Ozone ~ ., data=airquality, mtry=3,
+                         importance=TRUE, na.action=na.omit)
+print(ozone.rf)
+## Show "importance" of variables: higher value mean more important:
+round(importance(ozone.rf), 2)
+## "x" can be a matrix instead of a data frame:
+set.seed(17)
+x <- matrix(runif(5e2), 100)
+y <- gl(2, 50)
+(myrf <- randomForest(x, y))
+(predict(myrf, x))
+## "complicated" formula:
+(swiss.rf <- randomForest(sqrt(Fertility) ~ . - Catholic + I(Catholic < 50),
+                          data=swiss))
+(predict(swiss.rf, swiss))
+## Test use of 32-level factor as a predictor:
+set.seed(1)
+x <- data.frame(x1=gl(53, 10), x2=runif(530), y=rnorm(530))
+(rf1 <- randomForest(x[-3], x[[3]], ntree=10))
+## Grow no more than 4 nodes per tree:
+(treesize(randomForest(Species ~ ., data=iris, maxnodes=4, ntree=30)))
+## test proximity in regression
+iris.rrf <- randomForest(iris[-1], iris[[1]], ntree=101, proximity=TRUE, oob.prox=FALSE)
+str(iris.rrf$proximity)
+
+
+set.seed(647)
+myiris <- cbind(iris[1:4], matrix(runif(96 * nrow(iris)), nrow(iris), 96))
+result <- rfcv(myiris, iris$Species, cv.fold=3)
+with(result, plot(n.var, error.cv, log="x", type="o", lwd=2))
+## The following can take a while to run, so if you really want to try
+## it, copy and paste the code into R.
+## Not run:
+result <- replicate(5, rfcv(myiris, iris$Species), simplify=FALSE)
+error.cv <- sapply(result, "[[", "error.cv")
+matplot(result[[1]]$n.var, cbind(rowMeans(error.cv), error.cv), type="l",
+        lwd=c(2, rep(1, ncol(error.cv))), col=1, lty=1, log="x",
+        xlab="Number of variables", ylab="CV Error")
+## End(Not run)
+
+data(iris)
+iris.na <- iris
+set.seed(111)
+## artificially drop some data values.
+for (i in 1:4) iris.na[sample(150, sample(20)), i] <- NA
+set.seed(222)
+iris.imputed <- rfImpute(Species ~ ., iris.na)
+set.seed(333)
+iris.rf <- randomForest(Species ~ ., iris.imputed)
+print(iris.rf)
+
+
+data(fgl, package="MASS")
+fgl.res <- tuneRF(fgl[,-10], fgl[,10], stepFactor=1.5)
+
+
+set.seed(4543)
+data(mtcars)
+mtcars.rf <- randomForest(mpg ~ ., data=mtcars, ntree=1000, keep.forest=FALSE,
+                          importance=TRUE)
+varImpPlot(mtcars.rf)
+
+data(iris)
+set.seed(17)
+varUsed(randomForest(Species~., iris, ntree=100))
+
+
+
+
+# 9.3.5. 예측확률값 자체의 비교
+p1 <- data.frame(yhat_glmnet, yhat_rf) %>%
+  ggplot(aes(yhat_glmnet, yhat_rf)) +
+  geom_point(alpha=.5) +
+  geom_abline() +
+  geom_smooth()
+p2 <- reshape2::melt(data.frame(yhat_glmnet, yhat_rf)) %>%
+  ggplot(aes(value, fill=variable)) +
+  geom_density(alpha=.5)
+grid.arrange(p1, p2, ncol=2)
+g <- arrangeGrob(p1, p2, ncol=2)
+ggsave("../../plots/9-11.png", g, width=5.5*1.2, height=4*.8, units='in', dpi=600)
+
+
+# 부스팅 ----------
+
+set.seed(1607)
+adult_gbm <- training %>% mutate(wage=ifelse(wage == ">50K", 1, 0))
+ad_gbm <- gbm(wage ~ ., data=adult_gbm,
+              distribution="bernoulli",
+              n.trees=50000, cv.folds=3, verbose=TRUE)
+(best_iter <- gbm.perf(ad_gbm, method="cv"))
+
+ad_gbm2 <- gbm.more(ad_gbm, n.new.trees=10000)
+(best_iter <- gbm.perf(ad_gbm2, method="cv"))
+
+
+png("../../plots/9-12.png", 5.5, 4, units='in', pointsize=9, res=600)
+(best_iter <- gbm.perf(ad_gbm2, method="cv"))
+dev.off()
+
+
+predict(ad_gbm, n.trees=best_iter, newdata=adult_gbm[1:5,], type='response')
+
+yhat_gbm <- predict(ad_gbm, n.trees=best_iter, newdata=validation, type='response')
+binomial_deviance(y_obs, yhat_gbm)
+pred_gbm <- prediction(yhat_gbm, y_obs)
+perf_gbm <- performance(pred_gbm, measure="tpr", x.measure="fpr")
+performance(pred_gbm, "auc")@y.values[[1]]
+
+
+png("../../plots/9-13.png", 5.5, 4, units='in', pointsize=9, res=600)
+plot(perf_lm, col='black', main="ROC Curve")
+plot(perf_glmnet, add=TRUE, col='blue')
+plot(perf_rf, add=TRUE, col='red')
+plot(perf_gbm, add=TRUE, col='cyan')
+abline(0,1, col='gray')
+legend('bottomright', inset=.1,
+       legend=c("GLM", "glmnet", "RF", "GBM"),
+       col=c('black', 'blue', 'red', 'cyan'), lty=1, lwd=2)
+dev.off()
+
+
+
+# 모형 비교, 최종 모형 선택, 일반화 성능 평가 ----
+
+
+# 9.5.2. 모형의 예측확률값의 분포 비교
+# exmaple(pairs) 에서 따옴
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...){
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  r <- abs(cor(x, y))
+  txt <- format(c(r, 0.123456789), digits = digits)[1]
+  txt <- paste0(prefix, txt)
+  if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+  text(0.5, 0.5, txt, cex = cex.cor * r)
+}
+
+png("../../plots/9-14.png", 5.5, 4, units='in', pointsize=9, res=600)
+pairs(data.frame(y_obs=y_obs,
+                 yhat_lm=yhat_lm,
+                 yhat_glmnet=c(yhat_glmnet),
+                 yhat_rf=yhat_rf,
+                 yhat_gbm=yhat_gbm),
+      lower.panel=function(x,y){ points(x,y); abline(0, 1, col='red')},
+      upper.panel = panel.cor)
+dev.off()
+
+
+# 9.5.3. 테스트셋을 이용한 일반화능력 계산
+y_obs_test <- ifelse(test$wage == ">50K", 1, 0)
+yhat_gbm_test <- predict(ad_gbm, n.trees=best_iter, newdata=test, type='response')
+binomial_deviance(y_obs_test, yhat_gbm_test)
+pred_gbm_test <- prediction(yhat_gbm_test, y_obs_test)
+performance(pred_gbm_test, "auc")@y.values[[1]]
+
+# 9.6.5. 캐럿 (caret) 패키지
+install.packages("caret", dependencies = c("Depends", "Suggests"))
+
+
+
+# This is for the earlier ROC curve example. ---
+{
+  png("../../plots/8-1.png", 5.5*1.2, 4*.8, units='in', pointsize=9, res=600)
+  opar <- par(mfrow=c(1,2))
+  plot(perf_lm, col='black', main="ROC Curve")
+  plot(perf_tr, col='blue', add=TRUE)
+  abline(0,1, col='gray')
+  legend('bottomright', inset=.1,
+         legend = c("GLM", "Tree"),
+         col=c('black', 'blue'), lty=1, lwd=2)
+  plot(perf_lm, col='black', main="ROC Curve")
+  plot(perf_glmnet, add=TRUE, col='blue')
+  plot(perf_rf, add=TRUE, col='red')
+  plot(perf_gbm, add=TRUE, col='cyan')
+  abline(0,1, col='gray')
+  legend('bottomright', inset=.1,
+         legend=c("GLM", "glmnet", "RF", "GBM"),
+         col=c('black', 'blue', 'red', 'cyan'), lty=1, lwd=2)
+  par(opar)
+  dev.off()
+}
+
+
+
+
+
+
+
